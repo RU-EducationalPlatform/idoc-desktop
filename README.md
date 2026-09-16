@@ -26,9 +26,8 @@ questions, written in plain text and rendered live as you type.
 
 <br>
 
-This repository is where the **installed app** is published — the downloads,
-the add-on packs, and the feed the app checks for updates. The source lives in
-the project's own repository.
+This is where the **installed app** is published: the downloads, the add-on
+packs, and the feed the app checks for updates.
 
 ---
 
@@ -158,6 +157,8 @@ shows the problem helps more than anything else.
 <div align="center">
 <br>
 <sub>IDoc is part of <b>Knowsy</b>, built at Rutgers.<br>
+Copyright © 2026. All rights reserved. The app is distributed here as a
+binary; no licence to its code is granted.<br>
 Bundled with the app: TeX Gyre fonts (GUST Font License) · KiCad symbol and
 footprint libraries (CC-BY-SA 4.0) · Arduino AVR core (LGPL 2.1) ·
 Typst (Apache 2.0) · Pyodide (MPL 2.0).</sub>
