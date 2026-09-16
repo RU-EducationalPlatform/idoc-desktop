@@ -58,12 +58,12 @@ steps, and a third only if your machine needs it.
 in a terminal:
 
 ```bash
-chmod +x IDoc-0.1.1-x86_64.AppImage
+chmod +x IDoc-*-x86_64.AppImage
 ```
 
 Skip this step and the only thing you get is `Permission denied`.
 
-**2. Open it.** Double-click it, or run `./IDoc-0.1.1-x86_64.AppImage`.
+**2. Open it.** Double-click it, or run `./IDoc-*-x86_64.AppImage`.
 
 **3. Only if it refuses, naming `fusermount`:**
 
@@ -76,7 +76,7 @@ Nothing is wrong with the app or the download. An AppImage mounts itself using
 FUSE, and many machines no longer ship it. Either run it without mounting —
 
 ```bash
-./IDoc-0.1.1-x86_64.AppImage --appimage-extract-and-run
+./IDoc-*-x86_64.AppImage --appimage-extract-and-run
 ```
 
 — or install FUSE once, after which double-clicking works: `sudo apt install
