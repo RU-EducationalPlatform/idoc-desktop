@@ -39,13 +39,52 @@ Take the newest build from **[Releases](../../releases/latest)**.
 |---|---|---|
 | **macOS**, Apple silicon | `IDoc-<version>-arm64.dmg` | ~363 MB · drag to Applications |
 | **Windows** 10 / 11, 64-bit | `IDoc-Setup-<version>.exe` | ~309 MB · installs for you alone, no administrator needed |
-| **Linux**, 64-bit | `IDoc-<version>-x86_64.AppImage` | ~353 MB · `chmod +x` and run it |
+| **Linux**, 64-bit | `IDoc-<version>-x86_64.AppImage` | ~353 MB · one file, no install — [see below](#opening-it-on-linux) |
 
 > [!IMPORTANT]
 > **These builds are not signed yet.** macOS will say the app is from an
 > unidentified developer — open it once with right-click → **Open**. Windows
 > SmartScreen will warn — **More info** → **Run anyway**. Signing identities are
 > being arranged; until they exist, this notice is the honest state of it.
+
+### Opening it on Linux
+
+An AppImage is the whole app in one file: nothing to install, nothing to
+uninstall — keep it wherever you like and delete it when you are done. Two
+steps, and a third only if your machine needs it.
+
+**1. Let it run.** A downloaded file is not executable. In Files, right-click →
+**Properties** → **Permissions** → tick **Allow executing file as program**; or
+in a terminal:
+
+```bash
+chmod +x IDoc-0.1.1-x86_64.AppImage
+```
+
+Skip this step and the only thing you get is `Permission denied`.
+
+**2. Open it.** Double-click it, or run `./IDoc-0.1.1-x86_64.AppImage`.
+
+**3. Only if it refuses, naming `fusermount`:**
+
+```
+fuse: failed to exec fusermount: No such file or directory
+open dir error: No such file or directory
+```
+
+Nothing is wrong with the app or the download. An AppImage mounts itself using
+FUSE, and many machines no longer ship it. Either run it without mounting —
+
+```bash
+./IDoc-0.1.1-x86_64.AppImage --appimage-extract-and-run
+```
+
+— or install FUSE once, after which double-clicking works: `sudo apt install
+fuse` on Debian, `libfuse2` on Ubuntu 22.04, `libfuse2t64` on Ubuntu 24.04,
+`sudo dnf install fuse` on Fedora.
+
+A good place to keep the file is `~/Applications`, so an update is one file
+replaced.
 
 ---
 
