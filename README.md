@@ -14,7 +14,7 @@ questions, written in plain text and rendered live as you type.
 [![Windows](https://img.shields.io/badge/Windows-10%20%2F%2011-1f1d2e?style=for-the-badge)](../../releases/latest)
 [![Linux](https://img.shields.io/badge/Linux-x86__64-1f1d2e?style=for-the-badge)](../../releases/latest)
 
-[Download](#download) · [What it does offline](#what-the-app-does-that-a-browser-cannot) · [First run](#first-run) · [Add-ons](#add-ons) · [Updates](#updates)
+[Download](#download) · [What it does offline](#what-the-app-does-that-a-browser-cannot) · [First run](#first-run) · [Add-ons](#add-ons) · [Updates](#updates) · [Write IDoc anywhere](#write-idoc-anywhere)
 
 </div>
 
@@ -187,12 +187,129 @@ the add-ons you have already installed.
 
 ---
 
-## Writing IDoc in another editor, or with an AI assistant
+## Write IDoc anywhere
 
-[`editor-support/`](editor-support/) has the IDoc language for VS Code, Cursor,
-VSCodium, Windsurf, Vim, Neovim and TextMate editors, a Claude skill, and
-instruction files for Claude Code, Codex, Cursor, Copilot, Gemini and Windsurf.
-Each has a one-line install in [its README](editor-support/README.md).
+You don't need the app to write IDoc. Your editor can highlight it, complete it
+and point out mistakes, and an AI assistant can write it correctly once it has
+been told the language. Every file below is generated from the IDoc editor's own
+catalog of directives and question kinds, so they all agree with the app about
+what is valid.
+
+[![Claude](https://img.shields.io/badge/Claude-skill-584bb0?style=for-the-badge)](#claude-code)
+[![VS Code](https://img.shields.io/badge/VS%20Code%20%C2%B7%20Cursor%20%C2%B7%20Windsurf-extension-1f1d2e?style=for-the-badge)](#vs-code-cursor-vscodium-windsurf)
+[![Vim](https://img.shields.io/badge/Vim%20%C2%B7%20Neovim-plugin-1f1d2e?style=for-the-badge)](#vim-and-neovim)
+[![Agents](https://img.shields.io/badge/Codex%20%C2%B7%20Gemini%20%C2%B7%20Copilot-instructions-1f1d2e?style=for-the-badge)](#codex-gemini-cli-copilot-and-other-agents)
+
+| You use | What you get | Install |
+|---|---|---|
+| **Claude Code**, Claude Agent SDK | A skill Claude loads whenever a task involves IDoc | [one command](#claude-code) |
+| **VS Code**, Cursor, VSCodium, Windsurf | Highlighting, completions, 276 snippets, live diagnostics | [one command](#vs-code-cursor-vscodium-windsurf) |
+| **Vim**, Neovim | Filetype detection, syntax, comment settings | [one command](#vim-and-neovim) |
+| **Codex**, Gemini CLI, Copilot, Cursor, Windsurf | The language spec as the instruction file each one reads | [one command](#codex-gemini-cli-copilot-and-other-agents) |
+| **Sublime Text**, JetBrains, Zed | The TextMate grammar | [`editor-support/textmate/`](editor-support/textmate/) |
+| Anything else | The whole reference as one text file | [`llms.txt`](../../releases/download/editor-support/llms.txt) |
+
+### Claude Code
+
+Every project on this computer:
+
+```sh
+mkdir -p ~/.claude/skills && curl -fL https://github.com/RU-EducationalPlatform/idoc-desktop/releases/download/editor-support/idoc-skill.zip -o /tmp/idoc-skill.zip && unzip -o /tmp/idoc-skill.zip -d ~/.claude/skills/
+```
+
+<details>
+<summary>Windows PowerShell, one project only, or without a skill</summary>
+
+<br>
+
+```powershell
+New-Item -ItemType Directory -Force "$HOME\.claude\skills" | Out-Null; Invoke-WebRequest https://github.com/RU-EducationalPlatform/idoc-desktop/releases/download/editor-support/idoc-skill.zip -OutFile "$env:TEMP\idoc-skill.zip"; Expand-Archive -Force "$env:TEMP\idoc-skill.zip" "$HOME\.claude\skills"
+```
+
+For one project, unzip into that project's `.claude/skills/` instead. Or give the
+project the instructions as a file, run from the project folder (use `>>` to add to a
+`CLAUDE.md` that is already there):
+
+```sh
+curl -fL https://github.com/RU-EducationalPlatform/idoc-desktop/releases/download/editor-support/CLAUDE.md -o CLAUDE.md
+```
+
+</details>
+
+### VS Code, Cursor, VSCodium, Windsurf
+
+```sh
+curl -fL https://github.com/RU-EducationalPlatform/idoc-desktop/releases/download/editor-support/idoc.vsix -o /tmp/idoc.vsix && code --install-extension /tmp/idoc.vsix --force
+```
+
+Replace `code` with `cursor`, `codium` or `windsurf` for those editors. You can
+also use the Extensions view: the **...** menu, then **Install from VSIX**.
+
+<details>
+<summary>Windows PowerShell</summary>
+
+<br>
+
+```powershell
+Invoke-WebRequest https://github.com/RU-EducationalPlatform/idoc-desktop/releases/download/editor-support/idoc.vsix -OutFile "$env:TEMP\idoc.vsix"; code --install-extension "$env:TEMP\idoc.vsix" --force
+```
+
+</details>
+
+### Vim and Neovim
+
+```sh
+for d in ftdetect ftplugin syntax; do mkdir -p ~/.vim/$d && curl -fL https://raw.githubusercontent.com/RU-EducationalPlatform/idoc-desktop/main/editor-support/vim/$d/idoc.vim -o ~/.vim/$d/idoc.vim; done
+```
+
+<details>
+<summary>Neovim, and Windows</summary>
+
+<br>
+
+Neovim:
+
+```sh
+for d in ftdetect ftplugin syntax; do mkdir -p ~/.config/nvim/$d && curl -fL https://raw.githubusercontent.com/RU-EducationalPlatform/idoc-desktop/main/editor-support/vim/$d/idoc.vim -o ~/.config/nvim/$d/idoc.vim; done
+```
+
+Windows PowerShell, Vim (for Neovim, set `$dst` to `"$HOME\AppData\Local\nvim"`):
+
+```powershell
+$dst = "$HOME\vimfiles"; foreach ($d in "ftdetect","ftplugin","syntax") { New-Item -ItemType Directory -Force "$dst\$d" | Out-Null; Invoke-WebRequest https://raw.githubusercontent.com/RU-EducationalPlatform/idoc-desktop/main/editor-support/vim/$d/idoc.vim -OutFile "$dst\$d\idoc.vim" }
+```
+
+</details>
+
+### Codex, Gemini CLI, Copilot and other agents
+
+Run these in the project folder. Each puts the IDoc spec where that tool looks for
+instructions.
+
+| Tool | Command |
+|---|---|
+| **Codex**, and any agent that reads `AGENTS.md` | `curl -fL https://github.com/RU-EducationalPlatform/idoc-desktop/releases/download/editor-support/AGENTS.md -o AGENTS.md` |
+| **Gemini CLI** | `curl -fL https://raw.githubusercontent.com/RU-EducationalPlatform/idoc-desktop/main/editor-support/agents/GEMINI.md -o GEMINI.md` |
+| **GitHub Copilot** | `mkdir -p .github && curl -fL https://raw.githubusercontent.com/RU-EducationalPlatform/idoc-desktop/main/editor-support/agents/copilot-instructions.md -o .github/copilot-instructions.md` |
+| **Cursor** | `mkdir -p .cursor/rules && curl -fL https://raw.githubusercontent.com/RU-EducationalPlatform/idoc-desktop/main/editor-support/agents/.cursor/rules/idoc.mdc -o .cursor/rules/idoc.mdc` |
+| **Windsurf** | `curl -fL https://raw.githubusercontent.com/RU-EducationalPlatform/idoc-desktop/main/editor-support/agents/windsurfrules -o .windsurfrules` |
+
+If the project already has one of these files, append with `>>` instead of `-o`.
+
+<details>
+<summary><b>Keeping it current</b></summary>
+
+<br>
+
+Run the same command again to update. The files live in
+[`editor-support/`](editor-support/) and are also attached to the
+[`editor-support`](../../releases/tag/editor-support) release. That release is
+marked a pre-release so it never becomes "latest" and never gets in the way of
+the app's update feed.
+
+</details>
+
+---
 
 ## Reporting a problem
 
