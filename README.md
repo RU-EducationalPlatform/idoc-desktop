@@ -187,6 +187,13 @@ the add-ons you have already installed.
 
 ---
 
+## Writing IDoc in another editor, or with an AI assistant
+
+[`editor-support/`](editor-support/) has the IDoc language for VS Code, Cursor,
+VSCodium, Windsurf, Vim, Neovim and TextMate editors, a Claude skill, and
+instruction files for Claude Code, Codex, Cursor, Copilot, Gemini and Windsurf.
+Each has a one-line install in [its README](editor-support/README.md).
+
 ## Reporting a problem
 
 [Open an issue](../../issues/new). Please say what you were doing, which build

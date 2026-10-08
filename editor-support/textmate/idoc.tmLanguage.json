@@ -1,0 +1,172 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "IDoc",
+  "scopeName": "source.idoc",
+  "patterns": [
+    {
+      "include": "#blockComment"
+    },
+    {
+      "include": "#lineComment"
+    },
+    {
+      "include": "#literalAt"
+    },
+    {
+      "include": "#mathBlock"
+    },
+    {
+      "include": "#codeBlock"
+    },
+    {
+      "include": "#question"
+    },
+    {
+      "include": "#closer"
+    },
+    {
+      "include": "#directive"
+    },
+    {
+      "include": "#inlineFormat"
+    },
+    {
+      "include": "#marker"
+    }
+  ],
+  "repository": {
+    "blockComment": {
+      "name": "comment.block.idoc",
+      "begin": "@\\*",
+      "end": "\\*@"
+    },
+    "lineComment": {
+      "name": "comment.line.at.idoc",
+      "match": "@(?=[ \\t]).*$"
+    },
+    "literalAt": {
+      "name": "constant.character.escape.idoc",
+      "match": "@@"
+    },
+    "closer": {
+      "name": "keyword.control.end.idoc",
+      "match": "@(?:endlikert5|endshuffle|endblock|endtable|endcell|endpage|endpick|endpool|endquiz|endsnip|enddef|endrow|endqc|end|e)\\b"
+    },
+    "directive": {
+      "begin": "(@)(script_generate|selectquestion|accessibility|subsubsection|bibliography|visual_debug|audioplayer|formularand|proposition|spreadsheet|visualdebug|appendices|centertext|confidence|definition|discussion|endlikert5|endshuffle|flashcards|indexterms|inlinecode|references|subsection|titleslide|anonymous|author_cr|automaton|benchmark|codeblock|corollary|enumerate|factorial|fixedpage|incsyntax|observers|pagesetup|textstyle|titlepage|tolerance|watermark|abstract|appendix|defmacro|dragdrop|endblock|endtable|feedback|fillsize|footnote|formulaq|fragment|frompool|inherits|keywords|livecode|makescan|modelans|multicol|notebook|scanform|shellbox|smartart|solution|subtitle|verbatim|algoviz|authors|braille|codebox|columns|connect|discuss|endcell|endpage|endpick|endpool|endquiz|endsnip|example|grading|heading|hotspot|include|itemize|jupyter|justify|likert5|listing|newline|newpage|noprint|outcome|parsons|problem|profile|provide|randsym|section|shuffle|teacher|theorem|var_noc|version|weights|assign|author|branch|center|choice|course|enable|enddef|endrow|eqinfo|eqnnum|figure|footer|getvar|grader|groups|header|hspace|matlab|module|nocite|octave|optset|remark|repeat|reveal|rubric|shader|sketch|strong|studio|tabbed|vdebug|vspace|widget|align|audio|codex|eecad|endqc|eqnin|eqref|eqsrc|grade|graph|hfill|hours|input|label|lemma|logic|model|music|notes|param|print|proof|right|scale|shape|since|slide|staff|style|table|tests|theme|timed|title|topic|vfill|video|algo|calc|cell|chem|cite|code|cols|data|date|deck|dict|draw|drop|else|emph|enum|eval|exam|font|gate|hint|icon|item|late|left|link|list|meet|mesh|next|noai|note|pack|page|pick|pool|qref|quiz|rand|read|repl|rept|snip|step|tool|unit|verb|week|ans|bin|box|cad|cbm|col|def|doc|end|eqi|eqn|exp|geo|gpu|hex|img|inc|lab|let|oct|pdf|pre|ref|row|say|set|sim|tab|toc|tol|val|var|em|eq|h1|h2|h3|h4|h5|h6|if|it|nl|ol|qc|ta|ul|b|e|i|q|u)\\b|(@)([A-Za-z][A-Za-z0-9]*)",
+      "beginCaptures": {
+        "1": {
+          "name": "punctuation.definition.keyword.idoc"
+        },
+        "2": {
+          "name": "keyword.other.directive.idoc"
+        },
+        "3": {
+          "name": "punctuation.definition.keyword.idoc"
+        },
+        "4": {
+          "name": "entity.name.function.directive.idoc"
+        }
+      },
+      "end": "(?=[^A-Za-z0-9(])|$",
+      "patterns": [
+        {
+          "include": "#args"
+        }
+      ]
+    },
+    "args": {
+      "begin": "\\(",
+      "end": "\\)",
+      "name": "meta.args.idoc",
+      "patterns": [
+        {
+          "name": "string.quoted.double.idoc",
+          "begin": "\"",
+          "end": "\""
+        },
+        {
+          "name": "constant.language.qkind.idoc",
+          "match": "\\b(?:unordered|markdraw|formula|likert5|moddraw|slider|essay|match|order|range|draw|hmc|mad|mah|mav|mcd|mch|mcv|vmc|eq|fc|fn|fr|uo|c|e|f|m|n)\\b"
+        },
+        {
+          "name": "variable.parameter.idoc",
+          "match": "[A-Za-z_][A-Za-z0-9_]*(?=\\s*=)"
+        },
+        {
+          "name": "keyword.operator.assignment.idoc",
+          "match": "="
+        },
+        {
+          "name": "constant.numeric.idoc",
+          "match": "\\b\\d+(?:\\.\\d+)?\\b"
+        },
+        {
+          "name": "keyword.operator.correct.idoc",
+          "match": "[*~]"
+        }
+      ]
+    },
+    "question": {
+      "begin": "(@)(q|qc)(\\()",
+      "end": "\\)",
+      "beginCaptures": {
+        "1": {
+          "name": "punctuation.definition.keyword.idoc"
+        },
+        "2": {
+          "name": "keyword.other.question.idoc"
+        }
+      },
+      "patterns": [
+        {
+          "name": "constant.language.qkind.idoc",
+          "match": "\\b(?:unordered|markdraw|formula|likert5|moddraw|slider|essay|match|order|range|draw|hmc|mad|mah|mav|mcd|mch|mcv|vmc|eq|fc|fn|fr|uo|c|e|f|m|n)\\b"
+        },
+        {
+          "name": "keyword.operator.correct.idoc",
+          "match": "[*~]"
+        },
+        {
+          "name": "string.quoted.double.idoc",
+          "begin": "\"",
+          "end": "\""
+        }
+      ]
+    },
+    "mathBlock": {
+      "name": "meta.math.idoc",
+      "begin": "(@eqn|@eqnnum)\\b",
+      "end": "@(?:end|e)\\b",
+      "beginCaptures": {
+        "1": {
+          "name": "keyword.other.directive.idoc"
+        }
+      },
+      "contentName": "string.other.math.idoc"
+    },
+    "codeBlock": {
+      "name": "meta.code.idoc",
+      "begin": "(@code|@codeblock|@shellbox)\\b[^\\n]*",
+      "end": "@(?:end|e)\\b",
+      "beginCaptures": {
+        "1": {
+          "name": "keyword.other.directive.idoc"
+        }
+      },
+      "contentName": "source.embedded.idoc"
+    },
+    "inlineFormat": {
+      "match": "(@[biu]|@code|@em|@strong)(\\{)",
+      "captures": {
+        "1": {
+          "name": "keyword.other.directive.idoc"
+        }
+      }
+    },
+    "marker": {
+      "name": "keyword.operator.marker.idoc",
+      "match": "(?<=[\\s,(])[*~](?=\\S)"
+    }
+  }
+}
