@@ -776,6 +776,8 @@ Styleable directives (`@box` `@cad` `@eqn` `@eqnnum` `@figure` `@graph` `@headin
   @codegen(python, id=strings)
   #@ n = rand(2, 4)
   print("ab" * @(n)) # @ans
+  x = @blank(@(n) * 2)
+  print(x) # @ans
   @end
   ```
 - `@codepre` — Generates a .pre template file in place, the same way as @gencode: its language comes from the name before .pre (ops.sv.pre is SystemVerilog), and the program is run for its answers.
