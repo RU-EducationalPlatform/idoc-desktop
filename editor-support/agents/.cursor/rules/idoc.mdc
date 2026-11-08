@@ -159,7 +159,7 @@ Everything below is generated from the IDoc editor's own catalog, the same
 tables its @-menu and linter use. If a directive is not listed here, it does
 not exist: do not invent one.
 
-267 directives, 55 question kinds.
+304 directives, 55 question kinds.
 
 Conventions in this list: `block` means the directive takes a body that must be
 closed (by the closer named). `args:` lists the named arguments it accepts;
@@ -179,17 +179,27 @@ Styleable directives (`@box` `@cad` `@eqn` `@eqnnum` `@figure` `@graph` `@headin
   e.g. `@appendices`
 - `@appendix` — Everything after this is an appendix: sections letter A, B, C and their subsections number A.1, A.2 — in the preview and the PDF alike.
   e.g. `@appendix`
-- `@box` (block, closed by `@end`) — An absolutely-placed box: position it with x/y, size it with w/h, style it with bg/border/pad.
-  args: `x` (left edge — absolute placement); `y` (top edge — absolute placement); `w` (width (px % em cm in pt)); `h` (height (any unit)); `pad` (inner padding · also padding=); `bg` (background · also background=); `color` (text colour · also fg=, textcolor=, foreground=); `border` (e.g. 1px solid #ddd); `float=left|right` (left/right); `align=left|center|right` (text alignment inside the box); `fs` (font size · also fontsize=); `z=back|behind|front` (back/front); `shape=circle` (circle — round the box into a circle)
+- `@box` (block, closed by `@end`) — An absolutely-placed box: position it with x/y, size it with w/h, style it with bg/border/pad. A box can have rounded corners (radius=), a shadow, and a title band (title=, titlebg=) — drawn the same on paper.
+  args: `x` (left edge — absolute placement); `y` (top edge — absolute placement); `w` (width (px % em cm in pt)); `h` (height (any unit)); `pad` (inner padding · also padding=); `bg` (background · also background=); `color` (text colour · also fg=, textcolor=, foreground=); `border` (e.g. 1px solid #ddd); `float=left|right` (left/right); `align=left|center|right` (text alignment inside the box); `fs` (font size · also fontsize=); `z=back|behind|front` (back/front); `shape=circle` (circle — round the box into a circle); `radius` (rounded corners: 6pt (a bare number is px)); `rounded` (rounded corners at 6pt (flag)); `shadow` (a drop shadow to the lower right (flag)); `title` (a title band across the top); `titlebg` (the title band's colour (else the border's)); `style` (a @boxstyle by name: its look, the box's own arguments winning); `theme` (the same as style= (a @boxstyle by name))
   ```
   @box(x=2cm, y=3cm, w=6cm)
   content
+  @end
+  ```
+- `@boxstyle` — How a box looks, by name — `@boxstyle(qrbox, bg=#eef2ff, border=1pt solid #1d4ed8, radius=6pt, pad=8pt)`; then `@box(x=…, y=…, style=qrbox)` says only where the box goes. What a box states itself wins; `extends=` starts from another box style. Put them in a .style file to share them.
+  args: `bg` (background); `border` (e.g. 1pt solid #1d4ed8); `radius` (rounded corners); `pad` (inner padding); `shadow` (a drop shadow (flag)); `title` (a title band); `color` (text colour); `w` (width); `extends` (another box style this one starts from)
+  ```
+  @boxstyle(qrbox, bg=#eef2ff, border=1pt solid #1d4ed8, radius=6pt, pad=8pt)
+  @box(w=40%, style=qrbox)
+  …
   @end
   ```
 - `@centertext` — Template-layer centred text, optionally placed absolutely — used by generated layouts and stylesheets.
   e.g. `@centertext(text=Final Exam)`
 - `@col` — The column break inside @columns — and the column split on a two-column slide.
   e.g. `@col`
+- `@colbreak` — What follows starts the next column of a two-column paper or a @columns(n, flow) block. Nothing in one column.
+  e.g. `@colbreak`
 - `@cols` (block, closed by `@end`) — Auto-flowing columns; @col splits them. The short spelling of @columns, and the same block — it works in the PDF too.
   ```
   @cols(count=2)
@@ -198,7 +208,7 @@ Styleable directives (`@box` `@cad` `@eqn` `@eqnnum` `@figure` `@graph` `@headin
   right text
   @end
   ```
-- `@columns` (block, closed by `@end`) — Auto-flowing columns; @col splits them. Works in the PDF too. Aliases: `@cols`.
+- `@columns` (block, closed by `@end`) — Columns side by side, split by @col — or, with flow, text that runs from one column into the next and ends level (balanced) on screen and in the PDF. Aliases: `@cols`.
   ```
   @columns(count=2)
   left text
@@ -207,12 +217,12 @@ Styleable directives (`@box` `@cad` `@eqn` `@eqnnum` `@figure` `@graph` `@headin
   @end
   ```
 - `@doc` — Document-wide settings: paper template, theme, shuffling, question numbering, default fill-in width.
-  args: `template=article|ieee|acm|academic|research|report|proposal|thesis|letter|exam` (article / ieee / acm / academic / research / report / proposal / thesis / letter / exam); `colgap` (space between the paper's columns, e.g. colgap=0.3in (alias gutter=) — default comes from the venue); `theme=light|dark|auto` (light / dark / auto); `a11y=colorblind|dyslexia` (colorblind / dyslexia (space-separated)); `shuffle=mc` (mc — shuffle multiple-choice options per variant); `spread` (deal every @frompool / @pick so neighbouring versions share as little as the pools allow (flag)); `qnumbers` (Q1/Q2 prefixes (flag)); `fillsize` (blank width); `columns` (1 or 2 — page columns); `fontsize` (body font size); `font=Times New Roman|Georgia|Palatino|Garamond|Arial|Helvetica|Calibri|Computer Modern|serif|sans|mono` (body font family (Times New Roman, Georgia, sans…)); `margin` (page margin); `margintop` (top page margin on its own (overrides margin=)); `marginx` (left/right page margin on its own (overrides margin=)); `pagenumbers` (print page numbers (=true; numbers= is the older spelling)); `numbers` (the older spelling of pagenumbers=); `refsize` (the size references are set in (8pt by default)); `keywordlabel` (what the keyword block is called (“Index Terms” by default)); `marginbottom` (bottom page margin on its own (overrides margin=)); `speech` (how much mathematics says: beginner (names every structure) / standard / expert (shortest) — a reader may override); `speechrate` (how fast mathematics is read aloud (default 0.85 — slower than prose)); `pausefactor` (how much a spoken reading breathes — 0 removes structural pauses, 1 as authored, 2 doubles them); `lang` (language mathematics is read aloud in (en fr de es it hi ko ca da nb nn sv)); `paper` (us-letter/a4)
+  args: `template=article|ieee|acm|academic|research|report|proposal|thesis|letter|exam` (article / ieee / acm / academic / research / report / proposal / thesis / letter / exam); `pdfa` (an archival PDF/A-2b (fonts embedded, nothing fetched later) — for a thesis or a library deposit (flag)); `pdfua` (an accessible PDF/UA-1: needs alt= on every picture and a @title; else a tagged PDF and a warning saying what is missing (flag)); `mathfont` (the maths font: termes (with Times) / pagella (Palatino) / bonum / schola / dejavu — default Computer Modern); `colgap` (space between the paper's columns, e.g. colgap=0.3in (alias gutter=) — default comes from the venue); `theme=light|dark|auto` (light / dark / auto); `a11y=colorblind|dyslexia` (colorblind / dyslexia (space-separated)); `shuffle=mc` (mc — shuffle multiple-choice options per variant); `spread` (deal every @frompool / @pick so neighbouring versions share as little as the pools allow (flag)); `qnumbers` (Q1/Q2 prefixes (flag)); `fillsize` (blank width); `columns` (1 or 2 — page columns); `fontsize` (body font size); `font=Times New Roman|Georgia|Palatino|Garamond|Arial|Helvetica|Calibri|Computer Modern|serif|sans|mono` (body font family (Times New Roman, Georgia, sans…)); `margin` (page margin); `margintop` (top page margin on its own (overrides margin=)); `marginx` (left/right page margin on its own (overrides margin=)); `pagenumbers` (page numbers: true (1 / 3), false, or a style — 1, i, I, a, A, Page 1 of N (numbers= is the older spelling)); `landscape` (the whole document turned sideways (flag)); `inner` (the bound (inside) margin); `outer` (the outside margin); `twoside` (mirror inner/outer on even pages (flag)); `numbers` (the older spelling of pagenumbers=); `refsize` (the size references are set in (8pt by default)); `keywordlabel` (what the keyword block is called (“Index Terms” by default)); `marginbottom` (bottom page margin on its own (overrides margin=)); `speech` (how much mathematics says: beginner (names every structure) / standard / expert (shortest) — a reader may override); `speechrate` (how fast mathematics is read aloud (default 0.85 — slower than prose)); `pausefactor` (how much a spoken reading breathes — 0 removes structural pauses, 1 as authored, 2 doubles them); `lang` (the document's language: hyphenation, quotation marks and direction (ar, he right to left) on screen and in print, and the language maths is read aloud in — en, de, fr, pt-BR, ar, he…); `paper` (us-letter/a4); `notes` (end: footnotes become endnotes, set together under Notes at the end); `widows` (allow / avoid (default): may a paragraph leave one line at the top of a page); `orphans` (allow / avoid (default): may a paragraph leave one line at the bottom of a page)
   e.g. `@doc(template=ieee)`
 - `@fixedpage` (block, closed by `@end`) — Alias of @page — a fixed-geometry page. Aliases: `@page`.
   e.g. `@fixedpage … @endpage`
-- `@footer` — A running page footer with left / center / right slots.
-  e.g. `@footer(center=Page @@page)`
+- `@footer` — A running page footer with left / center / right slots — the same tokens and first= / even= as @header.
+  e.g. `@footer(center={page})`
 - `@h1` — Outline level 1 — the same heading as @section, under its HTML/Word name.
   e.g. `@h1(Introduction)`
 - `@h2` — Outline level 2 — the same heading as @subsection.
@@ -225,7 +235,7 @@ Styleable directives (`@box` `@cad` `@eqn` `@eqnnum` `@figure` `@graph` `@headin
   e.g. `@h5(Finer point)`
 - `@h6` — Outline level 6 — the deepest unnumbered run-in heading.
   e.g. `@h6(Finest point)`
-- `@header` — A running page header with left / center / right slots.
+- `@header` — A running page header with left / center / right slots. A slot may hold {page}, {pages}, {section} (the section the page is in) and {title}. first=none leaves page 1 bare; even=mirror swaps the sides on even pages.
   e.g. `@header(left=Course, center=Exam 1, right=Page)`
 - `@heading` — An UNNUMBERED heading (h2) — a section head that stays out of the numbering and the table of contents.
   e.g. `@heading(Agenda)`
@@ -241,7 +251,7 @@ Styleable directives (`@box` `@cad` `@eqn` `@eqnnum` `@figure` `@graph` `@headin
   @item three
   @end
   ```
-- `@newpage` — A page break (print and PDF). Aliases: `@pagebreak`.
+- `@newpage` — A page break. odd / even: the next right- or left-hand page (a chapter opening). numbers=: restart the page count in a style — front matter in i, ii… then @newpage(numbers=1) at chapter one. Aliases: `@pagebreak`.
   e.g. `@newpage`
 - `@next` — The item marker inside @multicol — identical to @item, both spellings read naturally.
   e.g. `@next`
@@ -260,8 +270,16 @@ Styleable directives (`@box` `@cad` `@eqn` `@eqnnum` `@figure` `@graph` `@headin
   @box(x=1in, y=1in, w=3in) …@end
   @endpage
   ```
-- `@pagesetup` — Paper size and margins for the whole document (put it in a .style to share it).
+- `@pagesetup` — Paper size and margins for the whole document (put it in a .style to share it): landscape; binding margins inner= / outer= (twoside mirrors them on even pages); the page-number style pagenumbers=1 | i | I | a | A | Page 1 of N | off.
   e.g. `@pagesetup(size=letter, margin=1in)`
+- `@rotate` (block, closed by `@end`) — A table or figure turned a quarter (90 clockwise, -90 anticlockwise) or 180 degrees, taking its turned size on the page — a wide table set sideways.
+  ```
+  @rotate(90)
+  @table(sep=|)
+  …
+  @endtable
+  @end
+  ```
 - `@section` — A numbered section heading (h2).
   e.g. `@section(Part 1)`
 - `@subsection` — A numbered sub-heading (h3).
@@ -274,14 +292,23 @@ Styleable directives (`@box` `@cad` `@eqn` `@eqnnum` `@figure` `@graph` `@headin
   e.g. `@title(My Exam)`
 - `@titlepage` — A cover page: title, author, date, then a page break.
   e.g. `@titlepage(title="Final Exam", author="Prof. X", date="2026")`
-- `@toc` — A table of contents. In a deck it lists slides and each entry jumps to its slide.
-  e.g. `@toc`
+- `@toc` — A table of contents. In a deck it lists slides and each entry jumps to its slide. @toc(figures) and @toc(tables) are the list of figures and of tables (with pages in the PDF).
+  e.g. `@toc(figures)`
 - `@vfill` — A flexible vertical spacer — pushes what follows to the bottom.
   e.g. `@vfill`
 - `@vspace` — A vertical gap of a given length.
   e.g. `@vspace(2em)`
 - `@watermark` — Big faded text behind the page content (DRAFT, CONFIDENTIAL…).
   e.g. `@watermark(DRAFT)`
+- `@wide` (block, closed by `@end`) — Content across both columns of a two-column paper (LaTeX's figure* or widetext). In print it floats to the top of the page (`at=bottom` for the foot), as a figure with `span` does; on screen it spans both columns where it is written. On a one-column page it is simply its contents.
+  args: `at` (top (default) or bottom of the page, in print)
+  ```
+  @wide
+  @table(sep=|)
+  …
+  @endtable
+  @end
+  ```
 
 ## Text & lists
 
@@ -293,6 +320,18 @@ Styleable directives (`@box` `@cad` `@eqn` `@eqnnum` `@figure` `@graph` `@headin
   content
   @end
   ```
+- `@color` (block, closed by `@end`) — Coloured text, up to @end. Any colour name, #hex, rgb() or hsl().
+  args: `color` (any colour name, #hex, rgb() or hsl())
+  e.g. `@color(red) these words @end`
+- `@dl` (block, closed by `@end`) — A description list: one `term: definition` per line — the term bold, the definition after it, a hanging indent, the same on paper.
+  ```
+  @dl
+  Resistor: a part that opposes current
+  Capacitor: a part that stores charge
+  @end
+  ```
+- `@dropcap` — A large first letter sunk through the opening lines of its paragraph (3 by default; lines=2 to 6). The PDF sets it at the same size beside the same lines.
+  e.g. `@dropcap(O)nce upon a time…`
 - `@em` — Italic text (alias of @i). Aliases: `@i`.
   e.g. `@em{italic}`
 - `@emph` — Emphasis — italic (alias of @em; spelled out, because @e already means @end). Aliases: `@em` `@i`.
@@ -313,15 +352,26 @@ Styleable directives (`@box` `@cad` `@eqn` `@eqnnum` `@figure` `@graph` `@headin
   @item First
   @end
   ```
-- `@font` (block, closed by `@end`) — Set the typeface for some words, the rest of a paragraph, or a whole block.
-  args: `name` (typeface (Times New Roman, Georgia, sans…) · also font=); `size` (optional size (14pt, 1.2em)); `text` (the words to style, when not given in braces)
+- `@font` (block, closed by `@end`) — Set the typeface for some words, the rest of a paragraph, or a whole block — and its weight (w=100–900 or light/semibold/black), letter spacing (track=0.05em) and figures (nums=oldstyle, lining, tabular, proportional).
+  args: `name` (typeface (Times New Roman, Georgia, sans…) · also font=); `size` (optional size (14pt, 1.2em)); `text` (the words to style, when not given in braces); `w` (weight: 100–900, or light, regular, medium, semibold, bold, black); `weight` (weight (same as w=)); `track` (letter spacing: 0.05em, 1pt (a bare number is em)); `tracking` (letter spacing (same as track=)); `nums` (figures: oldstyle or lining, and tabular or proportional (nums=oldstyle tabular)); `liga` (false: no ligatures (fi, fl, ff stay separate letters))
   e.g. `@font(Georgia){these words}`
 - `@footnote` — A numbered footnote at the bottom of the page.
   e.g. `text@footnote{the note}`
+- `@hl` (block, closed by `@end`) — Highlighted text. @hl(words) for the default yellow, @hl(green) words @end for a colour.
+  args: `color` (the highlight colour (default a pale yellow))
+  e.g. `@hl(important)`
 - `@i` — Italic text. Aliases: `@em` `@it`.
   e.g. `@i{italic}`
 - `@inherits` — Inside a .style: splice the parent stylesheet in first, so this sheet's settings override it.
   e.g. `@inherits(Rutgers)`
+- `@interlinear` (block, closed by `@end`) — A glossed example, numbered (1), (2)… First line the example, word by word (in italic); each line after it glosses those words, one gloss per word, so they line up in columns. Two or more capitals (`3SG`, `DEF`) are set in small capitals. A last line in quotes is the translation. `label=` for `@ref`, `nonum` to leave it unnumbered.
+  ```
+  @interlinear(label=dog)
+  Der Hund bell-t
+  the dog bark-3SG
+  'The dog is barking.'
+  @end
+  ```
 - `@it` — Italic text (alias of @i). Aliases: `@i`.
   e.g. `@it{italic}`
 - `@item` — One list entry, LaTeX-style. Its content may span lines.
@@ -334,6 +384,9 @@ Styleable directives (`@box` `@cad` `@eqn` `@eqnnum` `@figure` `@graph` `@headin
   ```
 - `@justify` (block, closed by `@end`) — Justify a block (flush both edges).
   e.g. `@justify … @end`
+- `@lang` (block, closed by `@end`) — Words in another language, up to @end: hyphenated, quoted and set left to right or right to left as that language is. A tag: de, fr, pt-BR, ar, he, zh.
+  args: `lang` (a language tag: de, fr, pt-BR, ar, he, zh)
+  e.g. `@lang(de) Die Würde des Menschen @end`
 - `@left` (block, closed by `@end`) — Left-align a block.
   e.g. `@left … @end`
 - `@link` — A hyperlink. A .idoc target opens that document in the editor; add #section to land on a particular heading — its label=, or a slug of its title. In a .course file the same word means an external resource listed in the course.
@@ -347,16 +400,29 @@ Styleable directives (`@box` `@cad` `@eqn` `@eqnnum` `@figure` `@graph` `@headin
   d, e
   @end
   ```
+- `@margin` — A note in the right margin, beside the line it is written in — printed, at the same width and size on screen and in the PDF.
+  e.g. `The result holds @margin(Only below 100 °C.) for every sample.`
 - `@newline` — Alias of @nl — a line break. Aliases: `@nl`.
   e.g. `@newline`
 - `@nl` — A line break (the explicit form inside a quiz line). Aliases: `@newline`.
   e.g. `@nl`
+- `@nohyphen` — Words that are never hyphenated at a line end (a name, a product).
+  e.g. `@nohyphen(Kruger-Ghosh)`
 - `@ol` (block, closed by `@end`) — A numbered list. The marker is 1 / A / a / I / i, and 1a or 1.1 gives combined nested numbering. Aliases: `@enumerate`.
   args: `cols` (column count (or auto)); `order=col|row` (col (default) or row); `sort=az|za|len|natural` (az | za | len | natural); `mono` (monospace items (flag)); `style` (marker: 1/A/a/I/i)
   ```
   @ol
   First
   Second
+  @end
+  ```
+- `@over` — A line over the text.
+  e.g. `@over(Q)`
+- `@par` (block, closed by `@end`) — A passage with its own paragraph settings, up to @end: first-line indent, hanging indent, spacing between paragraphs, line spacing, alignment, kept on one page, no hyphenation. The PDF sets each the same.
+  args: `indent` (first-line indent of a paragraph that follows a paragraph (1.5em)); `hang` (hanging indent: every line but the first (2em)); `spacing` (the gap between paragraphs (0.6em)); `leading` (line spacing, as @doc reads it: 1.0 single … 2.0 double); `align` (left | right | center | justify); `keep` (never split the passage across pages); `nohyphen` (no hyphenation at line ends)
+  ```
+  @par(indent=1.5em, spacing=0.4em)
+  …paragraphs…
   @end
   ```
 - `@pre` (block, closed by `@end`) — Alias of @verb — raw, exact text. Aliases: `@verb`.
@@ -375,25 +441,41 @@ Styleable directives (`@box` `@cad` `@eqn` `@eqnnum` `@figure` `@graph` `@headin
   @endcell
   @endtable
   ```
+- `@rule` — A horizontal line across the text column — its width, thickness, colour and alignment.
+  args: `w` (width: a % of the column or a length (100%)); `h` (thickness (0.5pt; a bare number is pt)); `color` (any colour); `align` (left | center | right)
+  e.g. `@rule`
+- `@s` — Struck-through text.
+  e.g. `@s(old price)`
+- `@sc` — Small capitals.
+  e.g. `@sc(Rutgers University)`
+- `@size` (block, closed by `@end`) — Text at another size, up to @end: 14pt, 1.2em, large, small.
+  args: `size` (14pt, 1.2em, or small / large / huge)
+  e.g. `@size(large) these words @end`
 - `@strong` — Bold text (alias of @b). Aliases: `@b`.
   e.g. `@strong{bold}`
-- `@style` — Apply a class stylesheet: a bare name finds styles/Name.style.
+- `@style` — Apply a stylesheet: a bare name finds styles/Name.style. The stylesheet is the theme: its @value names, its @textstyle and @boxstyle styles. Arguments after the name change it for THIS document only — one of its values (titles=Helvetica) or one property of one of its styles (h1.size=24pt, note.bg=#fff7ed); the file is untouched. Clicking the line opens the Style panel, which writes these for you. Two stylesheets: the later one wins where both say something.
   e.g. `@style(ECE231)`
+- `@sub` — Subscript text (not maths): H@sub(2)O.
+  e.g. `H@sub(2)O`
+- `@sup` — Superscript text (not maths): 1@sup(st), x@sup(2).
+  e.g. `@sup(th)`
 - `@table` (block, closed by `@endtable`) — A table — rows on newlines, cells on commas (sep= changes that). Cells hold anything: equations, code, questions, nested tables. Numeric columns auto right-align. Column sizes are yours when you want them: widths=30% 70%, widths=2fr 1fr 1fr, widths=1 1 3 — same result on screen and in the PDF. When a cell needs MORE than one line — a chart with its own data, a code listing — use @row and @cell instead and newlines stop meaning anything.
-  args: `header` (how many of the first rows are HEADER rows (default 1; header=0 = no header row, header=2 = a two-row header)); `span` (break across BOTH columns of a two-column paper (IEEE table*) — the fix for a wide table crammed into one column (flag)); `style` (clean / grid / zebra / card / minimal); `sep` (cell separator, e.g. sep=| — commas then stay literal in cells); `scramble` (shuffle the body rows for each student (per seed); the header rows, ## section rows and rowspan rows stay put, and every @q moves with its row (flag)); `rows` (rows to colour, counting the header as row 1: 2, 1..3 or (1 3 5); with bg= or color=. @2 colours whatever row prints second under scramble); `columns` (columns to colour: 2, 1..3 or (1 3 5); with bg= or color= (cols= is the width list)); `cells` (a block to colour: r2..3 c2..3 (the crossing of those rows and columns), with bg= or color=); `bg` (background for rows= / columns= / cells=); `color` (text colour for rows= / columns= / cells= (alone, its old meaning)); `paint` (several colour rules: r1..2:yellow; c(1 3 5):red text; r2..3 c2..3:lightblue — later rules win; a colour follows its row under scramble, @r2 colours the position); `side` (sit beside the previous table instead of stacking (flag)); `accent` (header/hover tint (#hex)); `align` (per-column l,r,c); `zebra` (striped rows (flag)); `compact` (tight padding (flag)); `roomy` (generous padding (flag)); `border` (ruled cells = grid (flag)); `caption` (caption under the table); `widths` (per-COLUMN widths: widths=30% 70%, widths=2fr 1fr 1fr, widths=1 1 3, or equal / auto (alias cols=)); `width` (whole-table width · also w=); `label` (name for @ref to point at)
+  args: `header` (how many of the first rows are HEADER rows (default 1; header=0 = no header row, header=2 = a two-row header)); `span` (break across BOTH columns of a two-column paper (IEEE table*) — the fix for a wide table crammed into one column (flag)); `style` (clean / grid / zebra / card / minimal); `sep` (cell separator, e.g. sep=| — commas then stay literal in cells); `scramble` (shuffle the body rows for each student (per seed); the header rows, ## section rows and rowspan rows stay put, and every @q moves with its row (flag)); `rows` (rows to colour, counting the header as row 1: 2, 1..3 or (1 3 5); with bg= or color=. @2 colours whatever row prints second under scramble); `columns` (columns to colour: 2, 1..3 or (1 3 5); with bg= or color= (cols= is the width list)); `cells` (a block to colour: r2..3 c2..3 (the crossing of those rows and columns), with bg= or color=); `bg` (background for rows= / columns= / cells=); `color` (text colour for rows= / columns= / cells= (alone, its old meaning)); `paint` (several colour rules: r1..2:yellow; c(1 3 5):red text; r2..3 c2..3:lightblue — later rules win; a colour follows its row under scramble, @r2 colours the position); `side` (sit beside the previous table instead of stacking (flag)); `accent` (header/hover tint (#hex)); `align` (per-column l,r,c); `zebra` (striped rows (flag)); `compact` (tight padding (flag)); `roomy` (generous padding (flag)); `border` (ruled cells = grid (flag)); `caption` (caption under the table); `widths` (per-COLUMN widths: widths=30% 70%, widths=2fr 1fr 1fr, widths=1 1 3, or equal / auto (alias cols=)); `width` (whole-table width · also w=); `label` (name for @ref to point at); `footer` (how many last rows are the foot (a total), repeated on every page); `rotate` (the sideways table: 90 or -90)
   ```
   @table
   Head1, Head2
   a, b
   @endtable
   ```
-- `@textstyle` — Typography for a named role, set once, honored on screen AND in the PDF. Roles: normal (alias body), title, author, abstract, heading1-6 (aliases h1/section, h2/subsection, ...), code, caption, table, tableheader. So the font of every table is @textstyle(table, font=..., size=...), and the header row alone is tableheader.
-  args: `font=Times New Roman|Georgia|Palatino|Garamond|Arial|Helvetica|Calibri|Computer Modern|serif|sans|mono` (font family); `size` (font size); `align=left|center|right|justify` (text alignment); `color` (text colour); `fg` (text colour (alias of color=)); `fgcolor` (text colour (alias of color=)); `bgcolor` (background); `background` (background (alias of bgcolor=)); `paragraphstyle` (how paragraphs are separated: indent or space)
+- `@textstyle` — Typography for a named role, set once, honored on screen AND in the PDF. extends=title starts from another style and states only what differs; weight=bold and italic set the face; a name that is not a role (huge) makes a style of your own, put on words with @use(huge) … @end; a value of the stylesheet (@value) may be named (font=titles). Roles: normal (alias body), title, author, abstract, heading1-6 (aliases h1/section, h2/subsection, ...), code, caption, table, tableheader. So the font of every table is @textstyle(table, font=..., size=...), and the header row alone is tableheader. The normal role also takes the paragraph settings for the whole document: indent=, hang=, spacing=, leading= (as @par does for a passage).
+  args: `font=Times New Roman|Georgia|Palatino|Garamond|Arial|Helvetica|Calibri|Computer Modern|serif|sans|mono` (font family); `size` (font size); `align=left|center|right|justify` (text alignment); `color` (text colour); `fg` (text colour (alias of color=)); `fgcolor` (text colour (alias of color=)); `bgcolor` (background); `background` (background (alias of bgcolor=)); `paragraphstyle` (how paragraphs are separated: indent or space); `indent` (first-line indent of a paragraph that follows a paragraph (1.5em)); `hang` (hanging indent (2em)); `spacing` (the gap between paragraphs (0.6em)); `leading` (line spacing: 1.0 single … 2.0 double); `weight` (bold, normal, or 100–900); `italic` (slanted (flag); style=normal is upright again); `extends` (start from another style (title, h1, or one of your own) and state only what differs)
   e.g. `@textstyle(normal, font="Georgia", size=18pt)`
 - `@theme` — Pin a named colour theme for THIS document (the reader can still override it in Appearance).
   e.g. `@theme(nord)`
-- `@u` — Underlined text.
-  e.g. `@u{underline}`
+- `@todo` — A note to yourself: shown in the preview's margin while you write, left out of every PDF, Word and EPUB file automatically. Saving a PDF lists the ones still in the document.
+  e.g. `The gain is 12 dB @todo(Check this value) at 1 kHz.`
+- `@u` — Underlined text — and with a look, up to @end: wave, double, dotted, dashed, thick (and a colour).
+  e.g. `@u(underlined)`
 - `@ul` (block, closed by `@end`) — A bulleted list — one item per line, or @item per entry. Lists nest. Aliases: `@itemize`.
   args: `cols` (column count (or auto)); `order=col|row` (col (default) or row); `sort=az|za|len|natural` (az | za | len | natural); `marker=disc|circle|square|dash|arrow|chevron|triangle|check|star|none` (disc circle square dash arrow check none, or any character); `mono` (monospace items (flag)); `plain` (no bullets (flag))
   ```
@@ -402,8 +484,14 @@ Styleable directives (`@box` `@cad` `@eqn` `@eqnnum` `@figure` `@graph` `@headin
   Second
   @end
   ```
+- `@up` — Upright text inside italics.
+  e.g. `@i(the @up(Titanic) sank)`
+- `@use` — Put a style of the stylesheet's own on words, up to @end: @textstyle(huge, extends=normal, size=1.5em, weight=bold) names it (any name that is not a role), @use(huge) puts it on. Alone on a line it styles every paragraph up to its @end. Same on screen and in the PDF.
+  e.g. `The carry is @use(huge) important @end here.`
+- `@value` — A stylesheet's named values, written once: @value(basefont=Times Roman, titles=Arial, basesize=12pt). Its styles then use the name (font=titles, border=1pt solid ink), so changing the value changes every style built on it; a document changes one for itself with @style(name, titles=Helvetica). The later value of a name wins.
+  e.g. `@value(basefont=Times Roman, titles=Arial, basesize=12pt, ink=#1f3a5f)`
 - `@verb` (block, closed by `@end`) — Raw text shown exactly as typed — monospace, whitespace preserved, nothing interpreted.
-  args: `text` (the verbatim text, when it is not the first argument); `font` (mono (default) / sans / serif / a font family); `size` (font size (e.g. 13 or 0.9rem)); `color` (text colour (#rrggbb)); `bg` (background colour (#rrggbb)); `align` (left / center / right); `wrap` (soft-wrap long lines instead of scrolling (flag)); `plain` (no box/background (flag)); `w` (cell width); `h` (height of the block)
+  args: `text` (the verbatim text, when it is not the first argument); `font` (mono (default) / sans / serif / a font family); `size` (font size (e.g. 13 or 0.9rem)); `color` (text colour (#rrggbb)); `bg` (background colour (#rrggbb)); `align` (left / center / right); `wrap` (wrap long lines (the default now, as print does)); `scroll` (scroll long lines sideways on screen instead of wrapping); `plain` (no box/background (flag)); `w` (cell width); `h` (height of the block)
   e.g. `@verb{inline}`
 - `@verbatim` (block, closed by `@end`) — Alias of @verb — raw, exact text. Aliases: `@verb`.
   e.g. `@verbatim … @end`
@@ -523,6 +611,19 @@ Styleable directives (`@box` `@cad` `@eqn` `@eqnnum` `@figure` `@graph` `@headin
     …
   @end
   ```
+- `@cd` (block, closed by `@end`) — A commutative diagram. The objects first, one row per line split at `&`; then one arrow per line, `from -> to : label`. Arrows: `->`, `=>` double, `-->` dashed, `>->` into, `->>` onto, `<->` both ways. A label sits left of the arrow as it travels; `label'` puts it on the right. Name an object by its maths, or by `(row,col)` when a name is used twice.
+  ```
+  @cd
+  A & B
+  C & D
+  A -> B : f
+  A -> C : g'
+  B -> D : h
+  C -> D : k
+  @end
+  ```
+- `@ce` — A chemical formula or equation — counts lowered, charges raised, arrows: H2O, SO4^2-, Fe^3+, NaCl(aq), CuSO4*5H2O, 2H2 + O2 -> 2H2O, N2 + 3H2 <=> 2NH3 (^ a gas, v a precipitate).
+  e.g. `@ce(2H2 + O2 -> 2H2O)`
 - `@dict` (block, closed by `@end`) — Define a library of named equations, reusable with @eq / @eqsrc. Indented lines under an entry add its fields (label:, caption:, expanded:, term: symbol | spoken | meaning | units, source:, author:, checked:); `short = Name` is an alias.
   ```
   @dict(trig)
@@ -551,10 +652,24 @@ Styleable directives (`@box` `@cad` `@eqn` `@eqnnum` `@figure` `@graph` `@headin
   V = I R
   @end
   ```
+- `@eqns` (block, closed by `@end`) — Several lines of maths lined up at `&`, each line with its own number. End a line with `@nonum` to leave it unnumbered, `@tag(*)` for a mark of your own, `@label(name)` to refer to it.
+  ```
+  @eqns
+  f(x) &= (x+1)^2 @label(sq)
+       &= x^2 + 2x + 1 @nonum
+  g(x) &= 3x
+  @end
+  ```
 - `@eqref` — Reference a numbered equation by its label.
   e.g. `as shown in @eqref(ohm)`
 - `@eqsrc` — Pull a library equation's SOURCE so you can edit it in place.
   e.g. `@eqsrc(trig.pythag)`
+- `@num` — A number set properly: digits grouped by threes with thin spaces, a true minus, an exponent written out (6.02e23 → 6.02 × 10²³).
+  e.g. `@num(1234567.89)`
+- `@qty` — A quantity: a number and its unit, never broken across a line.
+  e.g. `@qty(9.81, m/s^2)`
+- `@si` — A unit set properly: upright, powers raised, thin spaces between factors; ohm, degC, micro… become their symbols.
+  e.g. `@si(kg m s^-2)`
 
 ## Randomize & reuse
 
@@ -688,8 +803,8 @@ Styleable directives (`@box` `@cad` `@eqn` `@eqnnum` `@figure` `@graph` `@headin
     say "Happy birthday."
   @end
   ```
-- `@figure` — A NUMBERED figure with a caption, referenceable with @ref. `span` makes it full-measure in a two-column paper.
-  args: `src` (image file); `caption` (caption printed under the figure); `alt` (alt text for screen readers); `w` (display width); `label` (name for @ref to point at); `span` (full measure — across both columns in a two-column paper (flag))
+- `@figure` — A NUMBERED figure with a caption, referenceable with @ref, placed where it is written. Around several pictures or studios (… @end) it is a figure of parts: side by side in cols= columns, each captioned (a), (b)…, a @ref to a part reads "Figure 2(b)". Any studio is a figure on its own with caption=. `span` makes it full-measure in a two-column paper.
+  args: `src` (image file); `caption` (caption printed under the figure); `alt` (alt text for screen readers); `w` (display width); `label` (name for @ref to point at); `span` (full measure — across both columns in a two-column paper (flag)); `cols` (a figure of parts (… @end): how many side by side); `columns` (the same as cols=)
   e.g. `@figure(file=plot.png, caption=Result, label=fig1)`
 - `@film` (block, closed by `@end`) — Video editing in the document. `@video` plays a file; `@film` is the editor. The body IS the timeline: `size WxH fps=N`, then `track NAME` lines, each followed by its items — `clip FILE IN..OUT at=T` (the part of the file it uses, and where it starts), `image FILE at=T dur=D`, `title "text" at=T dur=D size= color= bg= y=`, `caption "text" at=T dur=D` (a caption track, drawn as subtitles and burned in when exported), `color #rrggbb at=T dur=D`, `audio FILE IN..OUT at=T vol= duck=V1` — with `fadein=`, `fadeout=`, `speed=`, `transition=dissolve|wipe|slide|fade:SECONDS`, colour (`bright= contrast= sat= hue= blur=`) and position (`x= y= scale= rot= opacity=`, each a number or keyframes like `1@0,1.3@4`); `marker T "label"` and `export film.mp4`. The first track is underneath. In the card: drag a clip to move it and its edges to trim; Shift on an edge ripples (everything after follows), Alt on an edge two clips share rolls the cut, Alt on a clip's body slips its source under it, Shift on the body slides it between its neighbours; I and O mark the source's in and out and X clears them, so Add media is a three-point edit; S splits, Delete removes (Shift closes the gap). Add caption takes an SRT or WebVTT file; Export as writes the captions (SRT, WebVTT) or the timeline (OpenTimelineIO, CMX 3600 EDL, Final Cut Pro XML), and Open timeline reads any of the three; Scopes shows the frame's histogram, luma waveform and vectorscope (BT.709). Make video encodes an MP4 on this device, the soundtrack mixed by the same kernel that grades it. With `id=`, `pts=`, `expect=` it is marked on the server from the text: `clips>=3, transitions>=1, titles>=1, captions>=1, duration=30±3, fades>=1, keyframes>=1, graded>=1, ducked, exports=mp4`.
   args: `expect` (what to check — clips>=3 · tracks>=2 · duration=30±3 · titles>=1 · transitions>=1 · transition=dissolve · fades>=1 · keyframes>=1 · graded>=1 (colour) · ducked · speed · audio>=1 · size=1920x1080 · fps=30 · exports=mp4 · uses=intro.mp4; each term one check, the score is the fraction right); `pts` (points this exercise is worth); `noedit` (the player alone, no editing (flag))
@@ -711,7 +826,7 @@ Styleable directives (`@box` `@cad` `@eqn` `@eqnnum` `@figure` `@graph` `@headin
 - `@icon` — A built-in icon glyph, sized and coloured like text.
   e.g. `@icon(check)`
 - `@img` — An image. Size with w/h, float it, caption it.
-  args: `fit` (contain / cover — fill the enclosing box (a scanform cell, a @fixedpage box) without overflowing it); `src` (image path); `w` (display width (px % em cm)); `h` (display height); `caption` (caption under the image); `alt` (alt text — read by screen readers, checked by the a11y audit); `float=left|right` (left/right); `inline` (inline icon (flag)); `gap` (space after); `label` (name for @ref to point at)
+  args: `fit` (contain / cover — fill the enclosing box (a scanform cell, a @fixedpage box) without overflowing it); `src` (image path); `w` (display width (px % em cm)); `h` (display height); `caption` (caption under the image); `alt` (alt text — read by screen readers, checked by the a11y audit); `float=left|right` (left/right); `inline` (inline icon (flag)); `gap` (space after); `label` (name for @ref to point at); `rotate` (turn it, in degrees clockwise (90, -90, 30); the line makes room); `crop` (cut off left top right bottom: 10% 0 10% 5% (one value: every side)); `scale` (0.5 = half its size (of w= when given))
   e.g. `@img(file=plot.png, w=60%)`
 - `@model` — A 3-D model viewer (.cmesh/.obj) or an inline .svg.
   args: `time` (live class: how long it stays open once the teacher opens it); `src` (.cmesh/.obj/.svg in <doc>.assets/); `shade=smooth|flat|wire` (smooth / flat / wire); `color` (solid colour (#rrggbb)); `height` (viewer height); `width` (viewer width)
@@ -793,6 +908,8 @@ Styleable directives (`@box` `@cad` `@eqn` `@eqnnum` `@figure` `@graph` `@headin
   e.g. `@include("code/lib.cpp", solve)`
 - `@incsyntax` — Include a whole file as a syntax-highlighted code listing.
   e.g. `@incsyntax(file=example.cpp)`
+- `@inlinecode` — Inline code in running text, the same as @code{…}: `@inlinecode(x = 1)` or `@inlinecode{x = 1}`. (What the LaTeX importer writes for \texttt.)
+  e.g. `@inlinecode(x = 1)`
 - `@input` — Include a whole .idoc, recursively (spec spelling). In a COURSE file it splices the department's half of the course — one late policy, one grade scale, one set of outcomes, in one place instead of pasted into every course; in a document it brings in a question bank or a shared rubric. Aliases: `@inc`.
   e.g. `@input("partials/intro.idoc")`
 - `@listing` (block, closed by `@end`) — Alias of @codeblock. Aliases: `@codeblock`.
@@ -1041,8 +1158,9 @@ Styleable directives (`@box` `@cad` `@eqn` `@eqnnum` `@figure` `@graph` `@headin
 - `@authors` — Authors pulled from author.db by id; style=full|names|short|ieee|email, or anon for blind review.
   e.g. `@authors(dk, sg)`
 - `@bibliography` — Print the reference list — from a .bib file or from @references.
+  args: `file` (a .bib file (else the @references entries)); `group` (print only this @references(group=…) list); `title` (the heading (default References, or the list's own title)); `style` (citation style for a .bib: ieee, apa…)
   e.g. `@bibliography(file=refs.bib)`
-- `@cite` — Cite a reference → [n], numbered in first-citation order.
+- `@cite` — Cite a reference → [n], numbered in first-citation order — with a page (p=12, pp=3-7, ch=, sec=), or as the author's name (text: "Shannon [1]"), the year or the author alone. Each number links to its entry, on screen and in the PDF.
   e.g. `@cite(shannon48)`
 - `@corollary` (block, closed by `@end`) — A numbered corollary block.
   e.g. `@corollary … @end`
@@ -1050,6 +1168,17 @@ Styleable directives (`@box` `@cad` `@eqn` `@eqnnum` `@figure` `@graph` `@headin
   e.g. `@definition(Entropy) … @end`
 - `@example` (block, closed by `@end`) — A numbered example block.
   e.g. `@example … @end`
+- `@gloss` — A glossary term in the text, linked to its definition (and listed by @printglossary).
+  e.g. `call the @gloss(API)`
+- `@glossary` (block, closed by `@end`) — The glossary's definitions, one `term: definition` per line (a term may have spaces). Printed by @printglossary for the terms a @gloss uses.
+  ```
+  @glossary
+  API: application programming interface
+  Fourier transform: …
+  @end
+  ```
+- `@idx` — A word in the text that also goes into the index; entry= files it under another heading. @printindex sets the index.
+  e.g. `The @idx(entropy) of a source`
 - `@indexterms` — Index terms for a paper (IEEE prints them as Index Terms). Aliases: `@keywords`.
   e.g. `@indexterms(fpga, timing)`
 - `@keywords` — Paper keywords — IEEE prints them as Index Terms. Aliases: `@indexterms`.
@@ -1058,10 +1187,16 @@ Styleable directives (`@box` `@cad` `@eqn` `@eqnnum` `@figure` `@graph` `@headin
   e.g. `@label(fig1)`
 - `@lemma` (block, closed by `@end`) — A numbered lemma block.
   e.g. `@lemma … @end`
+- `@newthm` — A theorem-like block of your own — @newthm(conjecture, Conjecture) then @conjecture … @end. style=plain (bold head, italic body), definition (upright body), remark (italic head); counter=theorem numbers it with the theorems.
+  e.g. `@newthm(conjecture, Conjecture)`
 - `@nocite` — Include a reference in the bibliography without citing it in the text.
   e.g. `@nocite(shannon48)`
 - `@note` (block, closed by `@end`) — A numbered note block.
   e.g. `@note … @end`
+- `@printglossary` — The glossary: the terms used, alphabetically, with their definitions.
+  e.g. `@printglossary`
+- `@printindex` — The index: every @idx entry, alphabetical under its initial, with the pages it is on — each a link.
+  e.g. `@printindex`
 - `@proof` (block, closed by `@end`) — A proof block (set in italics, ends with ∎). With check, @proof(check) is a proof IDoc's own kernel checks, in the reader's browser: a chain of equations, each with its reason (by ring), proving the theorem just above it (or goal="…"); reasons are ring (algebra), sum (the definition of a sum) and IH, and `induction n` with base:/step: chains proves a statement for every n (a base case the kernel can compute may be left out). A wrong step is named with what each side really is; the PDF prints the verdict.
   args: `check` (check this proof with IDoc's kernel: each line a = b, a <= b or a < b with its reason (by ring, sum, IH, auto)); `goal` (the statement it proves, quoted (default: the theorem just above))
   e.g. `@proof … @end`
@@ -1069,9 +1204,10 @@ Styleable directives (`@box` `@cad` `@eqn` `@eqnnum` `@figure` `@graph` `@headin
   e.g. `@proposition … @end`
 - `@qref` — Reference a labelled question — prints its number ("Q3").
   e.g. `as in @qref(kvl)`
-- `@ref` — Reference a labelled figure, table or section by its label.
+- `@ref` — Reference labelled figures, tables, sections, equations or theorems: one, or several ("Figures 1 and 2"), or the page one is on. Each is a link, on screen and in the PDF.
   e.g. `see @ref(fig1)`
 - `@references` (block, closed by `@end`) — Define references inline — one per line, `key: full text`.
+  args: `group` (one of several lists: @bibliography(group=…) prints it); `title` (the list's heading, e.g. Primary sources)
   ```
   @references
   shannon48: C. E. Shannon, …
@@ -1375,7 +1511,6 @@ The linter tolerates these, but the engine ignores them. Write the alternative.
 - `@eqnin` — $E = mc^2$ for maths inside a line, or @eqn for a display equation
 - `@feedback` — @branch(if=wrong) for a response to an answer, or @hint for a ladder
 - `@grade` — @qc(points) + @rubric, then Grade → Check answers
-- `@inlinecode` — @code{inline} — braces make it inline
 - `@jupyter` — @notebook for a notebook-style document, or @code(python, run) for one runnable cell
 - `@livecode` — @code(lang, run) or @lab(code, …)
 - `@parsons` — @q(order, …) — drag the lines into the right order, and it grades
