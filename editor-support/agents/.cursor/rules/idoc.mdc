@@ -159,7 +159,7 @@ Everything below is generated from the IDoc editor's own catalog, the same
 tables its @-menu and linter use. If a directive is not listed here, it does
 not exist: do not invent one.
 
-304 directives, 55 question kinds.
+305 directives, 55 question kinds.
 
 Conventions in this list: `block` means the directive takes a body that must be
 closed (by the closer named). `args:` lists the named arguments it accepts;
@@ -486,7 +486,7 @@ Styleable directives (`@box` `@cad` `@eqn` `@eqnnum` `@figure` `@graph` `@headin
   ```
 - `@up` — Upright text inside italics.
   e.g. `@i(the @up(Titanic) sank)`
-- `@use` — Put a style of the stylesheet's own on words, up to @end: @textstyle(huge, extends=normal, size=1.5em, weight=bold) names it (any name that is not a role), @use(huge) puts it on. Alone on a line it styles every paragraph up to its @end. Same on screen and in the PDF.
+- `@use` — Put a style of the stylesheet's own on words, up to @end: @textstyle(huge, extends=normal, size=1.5em, weight=bold) names it (any name that is not a role), @use(huge) puts it on. Alone on a line it styles everything up to its @end: paragraphs, and any table, list, box or code block inside (one style for a whole block, rather than a style= on each command). Same on screen and in the PDF.
   e.g. `The carry is @use(huge) important @end here.`
 - `@value` — A stylesheet's named values, written once: @value(basefont=Times Roman, titles=Arial, basesize=12pt). Its styles then use the name (font=titles, border=1pt solid ink), so changing the value changes every style built on it; a document changes one for itself with @style(name, titles=Helvetica). The later value of a name wins.
   e.g. `@value(basefont=Times Roman, titles=Arial, basesize=12pt, ink=#1f3a5f)`
@@ -875,17 +875,17 @@ Styleable directives (`@box` `@cad` `@eqn` `@eqnnum` `@figure` `@graph` `@headin
   ```
 - `@cell` (block, closed by `@end`) — One runnable notebook cell; a bare @cell inherits the previous cell's language. Inside a @table it means the other kind of cell — one cell of an explicit @row, holding anything, newlines and all.
   e.g. `@cell(python) … @end`
-- `@code` (block, closed by `@end`) — A code block. Add `run` to make it runnable, and @q(...) inside for gradeable blanks.
+- `@code` (block, closed by `@end`) — The one command for code. @code(python) … @end is a listing; add run for a Run button, edit for an editor, and @q(...) inside for gradeable blanks. @code(file=x.c) … @end reads the code from a file (its @q markers and @solution as @inc reads them). width=50% / height=12cm size it, a plain width=80 is columns. @code(octave, run) is the Octave studio. The older names (@codeblock, @listing, @codex, @incsyntax, @inlinecode, @codebox, @shellbox) still work and mean the same thing. Aliases: `@codeblock` `@listing` `@codex` `@incsyntax` `@inlinecode` `@codebox` `@shellbox`.
   args: `text` (inline @code(text): the code itself, when it is not the first argument); `language` (language for highlighting and for running it); `run` (make it runnable (flag)); `expect` (expected output (graded)); `tol` (tolerance); `tests` (hidden test checks — inline, or a file: tests=sv/alu_tb.sv (a Verilog testbench compiled with the student's module)); `pts` (points this exercise is worth; without it, a checked block right after @qc(P) is that question and takes P); `lines` (scan form: ruled lines for the handwritten answer (default: twice the starter, 8 to 30)); `time` (live class: how long it stays open once the teacher opens it (5m, 90s)); `stdin` (input fed to the program); `submit` (server = submittable); `timeout` (seconds before it is stopped); `width` (editor cols); `height` (editor rows); `active` (editable lines); `debug` (per-test grading (flag)); `caption` (caption under the listing); `label` (name for @ref to point at); `benchmark` (name that receives this widget's run time in ms (shown in its toolbar; @benchmark blocks and getBenchmark read it))
   ```
   @code(python)
   print(1)
   @end
   ```
-- `@codeblock` (block, closed by `@end`) — A read-only code listing. Aliases: `@listing`.
+- `@codeblock` (block, closed by `@end`) — An older name for @code: @codeblock(python) … @end is @code(python) … @end, a code listing. Aliases: `@listing`.
   e.g. `@codeblock(language=python) … @end`
-- `@codebox` (block, closed by `@end`) — An editable code box (no Run).
-  e.g. `@codebox(python) … @end`
+- `@codebox` (block, closed by `@end`) — An older name for @code(lang, run) … @end: an editor, runnable when the language can run. @codebox(language=c++) on its own line is an empty editor.
+  e.g. `@codebox(language=c++)`
 - `@codegen` — A randomized code template (idoc-pre): a program in its own language with setup lines (#@ n = rand(2, 9), check, stdin, rename), @(expr:fmt) values in any bit width, @blank(code) fill-ins and @ans output questions. Every mistake is listed before anything is generated; @gencode places it.
   ```
   @codegen(python, id=strings)
@@ -897,7 +897,7 @@ Styleable directives (`@box` `@cad` `@eqn` `@eqnnum` `@figure` `@graph` `@headin
   ```
 - `@codepre` — Generates a .pre template file in place, the same way as @gencode: its language comes from the name before .pre (ops.sv.pre is SystemVerilog), and the program is run for its answers.
   e.g. `@codepre(src=code/ops.sv.pre)`
-- `@codex` — The terse code include: @codex(first.sv). The suffix names the language, and it arrives runnable when that language has a runner — a .md or .json stays a plain listing.
+- `@codex` — An older name for @code(file=first.sv, run) … @end: a code file, its language from the suffix, runnable when that language has a runner (norun opts out).
   args: `src` (the file to show and run, relative to this document (also file=, path=, source=)); `lang` (override the language when the suffix can't say · also language=); `run` (force a Run button (flag)); `norun` (listing only, never runnable (flag)); `edit` (editable editor instead (flag)); `expect` (expected output (graded)); `tests` (hidden test checks); `stdin` (input fed to the program); `pts` (points this exercise is worth); `submit` (server = submittable); `timeout` (seconds before it is stopped)
   e.g. `@codex(01beginner/first.sv)`
 - `@gencode` — Places a @codegen template generated for each student's seed and run on the server for its answers: the listing with its blanks, then one question per @ans line. A second number places that many variants.
@@ -906,13 +906,13 @@ Styleable directives (`@box` `@cad` `@eqn` `@eqnnum` `@figure` `@graph` `@headin
   e.g. `@inc(file=part.idoc)`
 - `@include` — Extract a named @snip region from a file.
   e.g. `@include("code/lib.cpp", solve)`
-- `@incsyntax` — Include a whole file as a syntax-highlighted code listing.
+- `@incsyntax` — An older name for @code(file=example.cpp) … @end: a whole file as a code listing.
   e.g. `@incsyntax(file=example.cpp)`
-- `@inlinecode` — Inline code in running text, the same as @code{…}: `@inlinecode(x = 1)` or `@inlinecode{x = 1}`. (What the LaTeX importer writes for \texttt.)
+- `@inlinecode` — An older name for @code(x) in the middle of a line: `@inlinecode(x = 1)`. (What the LaTeX importer writes for \texttt.)
   e.g. `@inlinecode(x = 1)`
 - `@input` — Include a whole .idoc, recursively (spec spelling). In a COURSE file it splices the department's half of the course — one late policy, one grade scale, one set of outcomes, in one place instead of pasted into every course; in a document it brings in a question bank or a shared rubric. Aliases: `@inc`.
   e.g. `@input("partials/intro.idoc")`
-- `@listing` (block, closed by `@end`) — Alias of @codeblock. Aliases: `@codeblock`.
+- `@listing` (block, closed by `@end`) — An older name for @code(lang) … @end. Aliases: `@codeblock`.
   e.g. `@listing(c) … @end`
 - `@notebook` (block, closed by `@end`) — A Jupyter/Colab-style notebook — cells sharing one kernel.
   args: `time` (live class: how long it stays open once the teacher opens it); `kernel` (python / js); `benchmark` (name that receives this widget's run time in ms (shown in its toolbar; @benchmark blocks and getBenchmark read it))
@@ -921,7 +921,9 @@ Styleable directives (`@box` `@cad` `@eqn` `@eqnnum` `@figure` `@graph` `@headin
   @cell … @end
   @end
   ```
-- `@shellbox` (block, closed by `@end`) — A terminal / shell box.
+- `@path` — Where files of one kind are looked for, in order: @path(img: img/01basic, img). Kinds: img (pictures), code (@inc, @code file=, tests=), style (@style) and data (charts, drawings, .bib). Each folder is tried in turn, then the document's own folder, and nothing else: a file in none of them is an error that names every place looked, never a guess from elsewhere. A later @path for a kind replaces the earlier one; in a course stylesheet it sets the folders for every paper. ./x, ../x and /x are taken as written.
+  e.g. `@path(img: img/01basic, img)`
+- `@shellbox` (block, closed by `@end`) — An older name for @code(shell, edit) … @end: a terminal box.
   ```
   @shellbox
   $ make
