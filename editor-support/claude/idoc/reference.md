@@ -113,7 +113,7 @@ Everything below is generated from the IDoc editor's own catalog, the same
 tables its @-menu and linter use. If a directive is not listed here, it does
 not exist: do not invent one.
 
-305 directives, 55 question kinds.
+307 directives, 55 question kinds.
 
 Conventions in this list: `block` means the directive takes a body that must be
 closed (by the closer named). `args:` lists the named arguments it accepts;
@@ -493,6 +493,21 @@ Styleable directives (`@box` `@cad` `@eqn` `@eqnnum` `@figure` `@graph` `@headin
 - `@q` — A question or a blank. The kind is the first argument — see the question-kind list for all 40+ forms.
   args: `pts` (points this question is worth); `partial` (partial-credit rule); `grading=all|any|first` (all/any/first); `penalty` (points removed for a wrong answer); `shuffle` (shuffle options (flag)); `label` (for @qref); `boxes` (the printed scan form gives this write-in one answer box per ;-part of the answer, each graded separately: @q(f: x=2; y=3, boxes) — boxes=N pins the count); `w` (widget width (e.g. 300px) — or drag the grip); `h` (widget height)
   e.g. `@q(mch: 3, *4, 5)`
+- `@qblock` (block, closed by `@end`) — Short for @questionblock: a group of boxes worth one named share of the @qc above it.
+  ```
+  @qc(6, part=6)
+  @qblock(id=part)
+  @q(f:1) @q(f:0)
+  @end
+  ```
+- `@questionblock` (block, closed by `@end`) — A group of answer boxes worth ONE share of the @qc above it: `@qc(10, kmap=6, expr=4)` then `@questionblock(id=kmap) … @end`. Every box inside takes part of the 6 points (by its own `pts=`, or evenly), the block prints its points once, and the boxes print none of their own — a K-map's sixteen cells, or a program's answer boxes. A question outside any block takes a share by its id: `@q(eq:…, id=expr)`.
+  ```
+  @qc(10, kmap=6, expr=4)
+  @questionblock(id=kmap)
+  @q(m: 2,2: _0,_1,_1,_0)
+  @end
+  Simplified: @q(eq:AB'+A'B, id=expr)
+  ```
 - `@quiz` (block, closed by `@end`) — A quiz container — ONE question per line.
   ```
   @quiz
