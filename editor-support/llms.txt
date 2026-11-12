@@ -1253,7 +1253,7 @@ Styleable directives (`@box` `@cad` `@eqn` `@eqnnum` `@figure` `@graph` `@headin
 
 - `@assign` — Work to hand in. An .idoc assignment marks itself; anything else is an upload box. `attempts=N` with `keep=highest|latest|average`, `post=manual` to hold the marks back, `section=A` for one section, `markers=2` for two independent markers, `outcomes=` for what it measures.
   e.g. `@assign(hw1.idoc, due="2026-09-08 23:59", pts=100, cat=Homework)`
-- `@course` — Names the course. The .course file IS the syllabus AND what the gradebook runs on, so a date cannot be right in one and wrong in the other.
+- `@course` — Names the course. The .course file IS the syllabus AND what the gradebook runs on, so a date cannot be right in one and wrong in the other. IDoc adds uid=… itself: the course's own id, so a renamed file keeps its class and two courses with the same name never mix. Leave it as it is, and never copy it into a different course.
   e.g. `@course(ECE231, title="Digital Logic Design", term="Fall 2026")`
 - `@discuss` — A graded discussion. posts= and replies= state what taking part means before anybody starts, and the mark follows from it.
   e.g. `@discuss(prompt.idoc, pts=10, posts=1, replies=2)`
