@@ -1,6 +1,6 @@
 " Vim syntax file
 " Language: IDoc (.idoc, .style, .course)
-" Generated from the IDoc editor's own catalog: 312 directives, 29 question kinds.
+" Generated from the IDoc editor's own catalog: 315 directives, 29 question kinds.
 " Do not edit by hand.
 
 if exists("b:current_syntax")
@@ -16,11 +16,11 @@ syn match idocUnknown "@\h\w*"
 syn match idocDirective "@\%(accessibility\|bibliography\|audioeditor\|audioplayer\|appendices\|centertext\|anonymous\|author_cr\|automaton\|benchmark\|codeblock\|abstract\|appendix\|boxstyle\|algoviz\|authors\|braille\|codebox\|codegen\|assign\|author\|branch\|center\|choice\|align\|audio\|algo\|calc\|cell\|chem\|cite\|code\|ans\|bin\|box\|cad\|cbm\|cd\|ce\|b\)\>"
 syn match idocDirective "@\%(confidence\|definition\|discussion\|corollary\|enumerate\|colbreak\|defmacro\|dragdrop\|codepre\|columns\|connect\|diagram\|discuss\|dropcap\|course\|emerge\|enable\|eqinfo\|codex\|color\|dicom\|eecad\|cols\|data\|date\|deck\|dict\|draw\|drop\|else\|emph\|enum\|col\|def\|doc\|eqi\|eqn\|dl\|em\|eq\)\>"
 syn match idocDirective "@\%(exceptionset\|formularand\|flashcards\|factorial\|fixedpage\|feedback\|fillsize\|footnote\|formulaq\|fragment\|frompool\|glossary\|example\|gencode\|grading\|eqnnum\|figure\|footer\|getvar\|grader\|groups\|eqnin\|eqref\|eqsrc\|gloss\|grade\|graph\|eqns\|eval\|exam\|film\|font\|gate\|exp\|geo\|gpu\|h1\|h2\|h3\|h4\)\>"
-syn match idocDirective "@\%(interlinear\|indexterms\|inlinecode\|incsyntax\|inherits\|keywords\|heading\|hotspot\|include\|itemize\|jupyter\|justify\|likert5\|header\|hspace\|hfill\|hours\|input\|label\|lemma\|hint\|icon\|item\|lang\|late\|left\|link\|list\|hex\|idx\|img\|inc\|lab\|let\|h5\|h6\|hl\|if\|it\|i\)\>"
-syn match idocDirective "@\%(observers\|pagesetup\|livecode\|makescan\|modelans\|multicol\|nohyphen\|notebook\|listing\|newline\|newpage\|noprint\|outcome\|parsons\|margin\|matlab\|module\|newthm\|nocite\|octave\|optset\|logic\|model\|music\|notes\|param\|meet\|mesh\|next\|noai\|note\|over\|pack\|page\|path\|num\|oct\|par\|nl\|ol\)\>"
-syn match idocDirective "@\%(printglossary\|questionblock\|proposition\|printindex\|references\|problem\|profile\|provide\|quantum\|randsym\|qblock\|remark\|repeat\|reveal\|rotate\|rubric\|photo\|print\|proof\|right\|scale\|pick\|pool\|qref\|quiz\|rand\|read\|repl\|rept\|rule\|pdf\|pre\|qty\|ref\|row\|say\|qc\|sc\|q\|s\)\>"
-syn match idocDirective "@\%(script_generate\|selectquestion\|subsubsection\|spreadsheet\|subsection\|textstyle\|scanform\|shellbox\|smartart\|solution\|subtitle\|section\|shuffle\|teacher\|theorem\|shader\|sketch\|strong\|studio\|tabbed\|shape\|since\|slide\|staff\|style\|table\|tests\|theme\|timed\|title\|size\|snip\|step\|set\|sim\|sub\|sup\|tab\|si\|ta\)\>"
-syn match idocDirective "@\%(variantlabel\|visual_debug\|visualdebug\|titleslide\|titlepage\|tolerance\|watermark\|verbatim\|var_noc\|version\|weights\|vdebug\|vspace\|widget\|topic\|value\|vfill\|video\|todo\|tool\|unit\|verb\|week\|wide\|toc\|tol\|use\|val\|var\|ul\|up\|u\)\>"
+syn match idocDirective "@\%(interlinear\|indexterms\|inlinecode\|incsyntax\|inherits\|keywords\|heading\|hotspot\|include\|itemize\|jupyter\|justify\|likert5\|header\|hspace\|jackal\|hfill\|hours\|input\|label\|lemma\|hint\|icon\|item\|lang\|late\|left\|link\|hex\|idx\|img\|inc\|lab\|let\|h5\|h6\|hl\|if\|it\|i\)\>"
+syn match idocDirective "@\%(observers\|pagesetup\|livecode\|makescan\|modelans\|multicol\|nohyphen\|notebook\|octavius\|listing\|newline\|newpage\|noprint\|outcome\|margin\|matlab\|module\|newthm\|nocite\|octave\|optset\|logic\|model\|music\|notes\|list\|meet\|mesh\|next\|noai\|note\|octo\|over\|pack\|page\|num\|oct\|par\|nl\|ol\)\>"
+syn match idocDirective "@\%(printglossary\|questionblock\|proposition\|printindex\|references\|parsons\|problem\|profile\|provide\|quantum\|randsym\|qblock\|remark\|repeat\|reveal\|rotate\|rubric\|param\|photo\|print\|proof\|right\|path\|pick\|pool\|qref\|quiz\|rand\|read\|repl\|rept\|rule\|pdf\|pre\|qty\|ref\|row\|qc\|q\|s\)\>"
+syn match idocDirective "@\%(script_generate\|selectquestion\|subsubsection\|spreadsheet\|subsection\|textstyle\|scanform\|shellbox\|smartart\|solution\|subtitle\|section\|shuffle\|teacher\|shader\|sketch\|strong\|studio\|tabbed\|scale\|shape\|since\|slide\|staff\|style\|table\|tests\|theme\|size\|snip\|step\|say\|set\|sim\|sub\|sup\|tab\|sc\|si\|ta\)\>"
+syn match idocDirective "@\%(variantlabel\|visual_debug\|visualdebug\|titleslide\|titlepage\|tolerance\|watermark\|verbatim\|theorem\|var_noc\|version\|weights\|vdebug\|vspace\|widget\|timed\|title\|topic\|value\|vfill\|video\|todo\|tool\|unit\|verb\|week\|wide\|toc\|tol\|use\|val\|var\|ul\|up\|u\)\>"
 syn match idocStructural "@\%(subsubsection\|subsection\|titleslide\|abstract\|section\|slide\|title\|deck\)\>"
 syn match idocCloser "@\%(endlikert5\|endshuffle\|endblock\|endtable\|endcell\|endpage\|endpick\|endpool\|endquiz\|endsnip\|enddef\|endrow\|endqc\|end\|e\)\>"
 
