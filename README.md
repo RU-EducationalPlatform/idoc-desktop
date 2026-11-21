@@ -13,7 +13,7 @@ questions, written in plain text and rendered live as you type.
 [![macOS](https://img.shields.io/badge/macOS-Apple%20silicon-1f1d2e?style=for-the-badge)](../../releases/latest)
 [![Windows](https://img.shields.io/badge/Windows-10%20%2F%2011-1f1d2e?style=for-the-badge)](../../releases/latest)
 [![Linux](https://img.shields.io/badge/Linux-x86__64-1f1d2e?style=for-the-badge)](../../releases/latest)
-[![Downloads](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2FRU-EducationalPlatform%2Fidoc-desktop%2Fmain%2Fstats%2Fdownloads.json&style=for-the-badge)](#downloads)
+[![Downloads](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2FRU-EducationalPlatform%2Fidoc-desktop%2Fmain%2Fstats%2Fdownloads.json&cb=2&style=for-the-badge)](#downloads)
 
 [Download](#download) · [What it does offline](#what-the-app-does-that-a-browser-cannot) · [First run](#first-run) · [Add-ons](#add-ons) · [Updates](#updates) · [Write IDoc anywhere](#write-idoc-anywhere)
 
