@@ -56,7 +56,7 @@ Take the newest build from **[Releases](../../releases/latest)**.
 | macOS | 5 | 156 |
 | Windows | 3 | 76 |
 | Linux | 5 | 119 |
-| **Total** | **13** | **351** |
+| **Total** | **13** | **300** |
 
 <img src="stats/releases.svg" alt="Installer downloads per release, last 12 releases" width="640">
 
