@@ -1,5 +1,6 @@
 {
   "taken": "2026-11-21",
+  "testers": 10,
   "assets": {
     "IDoc-0.1.0-arm64.dmg": 3,
     "IDoc-0.1.0-x86_64.AppImage": 8,
@@ -114,8 +115,11 @@
     "IDoc-1.0.0-x86_64.AppImage": 2,
     "IDoc-1.0.0.dmg": 1,
     "IDoc-1.1.0-arm64.dmg": 3,
-    "IDoc-1.1.0-x86_64.AppImage": 5,
+    "IDoc-1.1.0-x86_64.AppImage": 6,
     "IDoc-1.1.0.dmg": 2,
+    "IDoc-1.1.1-arm64.dmg": 0,
+    "IDoc-1.1.1-x86_64.AppImage": 0,
+    "IDoc-1.1.1.dmg": 0,
     "IDoc-Setup-0.1.0.exe": 7,
     "IDoc-Setup-0.1.1.exe": 2,
     "IDoc-Setup-0.1.10.exe": 2,
@@ -155,7 +159,7 @@
     "IDoc-Setup-0.1.8.exe": 1,
     "IDoc-Setup-0.1.9.exe": 1,
     "IDoc-Setup-1.0.0.exe": 2,
-    "IDoc-Setup-1.1.0.exe": 3
-  },
-  "testers": 10
+    "IDoc-Setup-1.1.0.exe": 3,
+    "IDoc-Setup-1.1.1.exe": 0
+  }
 }
