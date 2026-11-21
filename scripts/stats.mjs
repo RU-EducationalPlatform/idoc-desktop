@@ -2,7 +2,7 @@
 /**
  * Download statistics for this repository's installers, from GitHub's own release counters.
  *
- *   node scripts/stats.mjs              read the releases (GITHUB_TOKEN if set), rewrite stats/ and the README block
+ *   node scripts/stats.mjs              read the releases (GITHUB_TOKEN if set), rewrite stats/ and the README block (only if the README has the markers)
  *   node scripts/stats.mjs --check      the same, written nowhere: prints what it would write
  *
  * Counted: the installers a person downloads (macOS .dmg, Windows Setup .exe, Linux .AppImage) on released versions (v1.2.3).
@@ -74,6 +74,9 @@ export function renderBlock(s) {
 
 export const START = "<!-- stats:start -->", END = "<!-- stats:end -->";
 
+/** Does the README carry the markers? Without them the README is left alone (the count is not shown anywhere). */
+export const hasMarkers = (readme) => readme.includes(START) && readme.indexOf(END) > readme.indexOf(START);
+
 /** Put `block` between the markers (kept), leaving everything else exactly as it was. */
 export function spliceReadme(readme, block) {
   const i = readme.indexOf(START), j = readme.indexOf(END);
@@ -114,10 +117,10 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
   const s = summarise(releases);
   if (!releases.length || !s.series.length) throw new Error("no released versions found: refusing to overwrite the README with zeros");
   const files = { "stats/summary.json": JSON.stringify(s, null, 2) + "\n", "stats/downloads.json": JSON.stringify(shieldsEndpoint(s)) + "\n", "stats/releases.svg": chartSvg(s.series) };
-  const readme = spliceReadme(readFileSync("README.md", "utf8"), renderBlock(s));
+  const current = readFileSync("README.md", "utf8");
   if (process.argv.includes("--check")) { console.log(renderBlock(s)); console.log(shieldsEndpoint(s)); process.exit(0); }
   mkdirSync("stats", { recursive: true });
   for (const [f, text] of Object.entries(files)) writeFileSync(f, text);
-  writeFileSync("README.md", readme);
+  if (hasMarkers(current)) writeFileSync("README.md", spliceReadme(current, renderBlock(s)));
   console.log(`total ${s.all}; latest ${s.latest.tag} ${sum(s.latest)}`);
 }

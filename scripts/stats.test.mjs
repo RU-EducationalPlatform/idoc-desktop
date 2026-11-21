@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { classify, isRelease, summarise, renderBlock, spliceReadme, shieldsEndpoint, chartSvg, START, END } from "./stats.mjs";
+import { classify, isRelease, summarise, renderBlock, spliceReadme, shieldsEndpoint, chartSvg, hasMarkers, START, END } from "./stats.mjs";
 
 const asset = (name, n) => ({ name, download_count: n });
 const rel = (tag, date, assets, extra = {}) => ({ tag_name: tag, published_at: date, draft: false, prerelease: false, assets, ...extra });
@@ -51,4 +51,10 @@ test("the chart is a valid, self-contained SVG with one bar per release", () => 
   const svg = chartSvg(summarise(RELEASES).series);
   assert.match(svg, /^<svg [^>]*viewBox/);
   assert.equal((svg.match(/<rect /g) ?? []).length, 2);
+});
+
+test("a README without the markers is left alone: the count is shown nowhere until someone puts the markers back", () => {
+  assert.equal(hasMarkers("# IDoc\nno markers here"), false);
+  assert.equal(hasMarkers(`${END}\n${START}`), false, "in the wrong order is not a block");
+  assert.equal(hasMarkers(`a\n${START}\nx\n${END}\n`), true);
 });
