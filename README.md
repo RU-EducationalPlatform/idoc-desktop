@@ -56,9 +56,10 @@ Take the newest build from **[Releases](../../releases/latest)**.
 | macOS | 0 | 0 |
 | Windows | 0 | 0 |
 | Linux | 0 | 0 |
-| **Total** | **0** | **0** |
+| Early testers | | 10 |
+| **Total** | **0** | **10** |
 
-<sub>Counted from GitHub's own release counters: the installers only, not add-on packs or tools. Our own downloading and testing is left out: each release is counted from the moment we finished checking it (counting began 2026-11-21). A count is a download, not a person.</sub>
+<sub>Counted from GitHub's own release counters: the installers only, not add-on packs or tools. The early testers are counted once, as a group; after that only real downloads count, each release from the moment we finished checking it (counting began 2026-11-21). A count is a download, not a person.</sub>
 <!-- stats:end -->
 
 ### Opening it on Linux

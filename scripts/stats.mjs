@@ -42,11 +42,15 @@ export function countedFor(asset, baseline) {
   return ours === undefined ? 0 : Math.max(0, n - ours);
 }
 
-/** The baseline file's content: every installer's count right now. Written by `--baseline` after a release is verified. */
-export function makeBaseline(releases, taken) {
+/**
+ * The baseline file's content: every installer's count right now, and `testers`: how many early testers we count on purpose
+ * (the team, Prof. Kruger and the others who tried it first), shown as their own row so nobody has to guess a platform for them.
+ Written by `--baseline` after a release is verified.
+ */
+export function makeBaseline(releases, taken, testers = 0) {
   const assets = {};
   for (const r of releases.filter(isRelease)) for (const a of r.assets ?? []) if (classify(a.name)) assets[a.name] = Number(a.download_count) || 0;
-  return { taken, assets: Object.fromEntries(Object.entries(assets).sort(([x], [y]) => x.localeCompare(y))) };
+  return { taken, testers, assets: Object.fromEntries(Object.entries(assets).sort(([x], [y]) => x.localeCompare(y))) };
 }
 
 /** Totals per platform for one release. */
@@ -67,8 +71,9 @@ export function summarise(releases, baseline) {
     series.push({ tag: r.tag_name, count: c.mac + c.win + c.linux });
   }
   const latest = rel[0] ? { tag: rel[0].tag_name, ...releaseCounts(rel[0], baseline) } : { tag: "", mac: 0, win: 0, linux: 0 };
-  const all = total.mac + total.win + total.linux;
-  return { latest, total, all, since: baseline?.taken ?? null, series: series.slice(0, 12).reverse() };   // the chart reads oldest to newest
+  const all = total.mac + total.win + total.linux;   // counted from real downloads; the early testers are added below
+  const testers = Number(baseline?.testers) || 0;
+  return { latest, total, testers, all: all + testers, since: baseline?.taken ?? null, series: series.slice(0, 12).reverse() };   // the chart reads oldest to newest
 }
 
 const sum = (c) => c.mac + c.win + c.linux;
@@ -87,10 +92,11 @@ export function renderBlock(s) {
     `| Platform | ${v} | All releases |`,
     "|---|---:|---:|",
     rows,
+    ...(s.testers ? [`| Early testers | | ${fmt(s.testers)} |`] : []),
     `| **Total** | **${fmt(sum(s.latest))}** | **${fmt(s.all)}** |`,
     "",
     ...(s.series.some((p) => p.count > 0) ? ['<img src="stats/releases.svg" alt="Installer downloads per release, last 12 releases" width="640">', ""] : []),
-    `<sub>Counted from GitHub's own release counters: the installers only, not add-on packs or tools. Our own downloading and testing is left out: each release is counted from the moment we finished checking it${s.since ? ` (counting began ${s.since})` : ""}. A count is a download, not a person.</sub>`,
+    `<sub>Counted from GitHub's own release counters: the installers only, not add-on packs or tools. The early testers are counted once, as a group; after that only real downloads count, each release from the moment we finished checking it${s.since ? ` (counting began ${s.since})` : ""}. A count is a download, not a person.</sub>`,
   ].join("\n");
 }
 
@@ -137,7 +143,9 @@ async function fetchReleases(token) {
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
   const releases = await fetchReleases(process.env.GITHUB_TOKEN);
   if (process.argv.includes("--baseline")) {
-    const b = makeBaseline(releases, new Date().toISOString().slice(0, 10));
+    let testers = 0;
+    try { testers = Number(JSON.parse(readFileSync("stats/baseline.json", "utf8")).testers) || 0; } catch { /* a first baseline */ }   // keep the testers figure when re-baselining
+    const b = makeBaseline(releases, new Date().toISOString().slice(0, 10), testers);
     mkdirSync("stats", { recursive: true });
     writeFileSync("stats/baseline.json", JSON.stringify(b, null, 2) + "\n");
     console.log(`baseline written: ${Object.keys(b.assets).length} installers as of ${b.taken}`);

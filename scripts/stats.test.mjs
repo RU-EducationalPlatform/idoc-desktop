@@ -62,6 +62,7 @@ test("a README without the markers is left alone: the count is shown nowhere unt
 test("our own downloads are filtered: only what comes after the baseline counts", () => {
   const baseline = makeBaseline(RELEASES, "2026-11-21");
   assert.equal(baseline.assets["IDoc-1.1.0-arm64.dmg"], 5);
+  assert.equal(baseline.testers, 0);
   assert.equal(baseline.assets["latest.json"], undefined, "only installers are baselined");
   assert.equal(summarise(RELEASES, baseline).all, 0, "right after verifying, nothing is counted");
   const later = RELEASES.map((r) => ({ ...r, assets: r.assets.map((a) => a.name === "IDoc-1.1.0-arm64.dmg" ? { ...a, download_count: a.download_count + 3 } : a) }));
@@ -88,4 +89,17 @@ test("the chart appears only once there is something to chart, and the note says
   assert.doesNotMatch(empty, /releases\.svg/);
   assert.match(empty, /counting began 2026-11-21/);
   assert.match(renderBlock(summarise(RELEASES)), /releases\.svg/, "raw counts have something to chart");
+});
+
+test("the early testers are counted once, as their own row, and real downloads add to them", () => {
+  const baseline = makeBaseline(RELEASES, "2026-11-21", 10);
+  assert.equal(baseline.testers, 10);
+  const s = summarise(RELEASES, baseline);
+  assert.deepEqual([s.testers, s.all, s.total.mac], [10, 10, 0]);
+  const block = renderBlock(s);
+  assert.match(block, /\| Early testers \| \| 10 \|/);
+  assert.match(block, /\*\*Total\*\* \| \*\*0\*\* \| \*\*10\*\*/);
+  const later = RELEASES.map((r) => ({ ...r, assets: r.assets.map((a) => a.name === "IDoc-1.1.0-arm64.dmg" ? { ...a, download_count: a.download_count + 2 } : a) }));
+  assert.equal(summarise(later, baseline).all, 12, "ten testers and two real downloads");
+  assert.deepEqual(shieldsEndpoint(summarise(later, baseline)).message, "12");
 });

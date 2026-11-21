@@ -156,5 +156,6 @@
     "IDoc-Setup-0.1.9.exe": 1,
     "IDoc-Setup-1.0.0.exe": 2,
     "IDoc-Setup-1.1.0.exe": 3
-  }
+  },
+  "testers": 10
 }
