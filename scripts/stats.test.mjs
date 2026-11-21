@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { classify, isRelease, summarise, renderBlock, spliceReadme, shieldsEndpoint, chartSvg, hasMarkers, START, END } from "./stats.mjs";
+import { classify, isRelease, summarise, countedFor, makeBaseline, renderBlock, spliceReadme, shieldsEndpoint, chartSvg, hasMarkers, START, END } from "./stats.mjs";
 
 const asset = (name, n) => ({ name, download_count: n });
 const rel = (tag, date, assets, extra = {}) => ({ tag_name: tag, published_at: date, draft: false, prerelease: false, assets, ...extra });
@@ -57,4 +57,35 @@ test("a README without the markers is left alone: the count is shown nowhere unt
   assert.equal(hasMarkers("# IDoc\nno markers here"), false);
   assert.equal(hasMarkers(`${END}\n${START}`), false, "in the wrong order is not a block");
   assert.equal(hasMarkers(`a\n${START}\nx\n${END}\n`), true);
+});
+
+test("our own downloads are filtered: only what comes after the baseline counts", () => {
+  const baseline = makeBaseline(RELEASES, "2026-11-21");
+  assert.equal(baseline.assets["IDoc-1.1.0-arm64.dmg"], 5);
+  assert.equal(baseline.assets["latest.json"], undefined, "only installers are baselined");
+  assert.equal(summarise(RELEASES, baseline).all, 0, "right after verifying, nothing is counted");
+  const later = RELEASES.map((r) => ({ ...r, assets: r.assets.map((a) => a.name === "IDoc-1.1.0-arm64.dmg" ? { ...a, download_count: a.download_count + 3 } : a) }));
+  const s = summarise(later, baseline);
+  assert.deepEqual([s.all, s.latest.mac, s.total.win], [3, 3, 0], "three real downloads after the baseline");
+});
+
+test("an installer that is not in the baseline yet (a release we have not finished checking) counts as zero, never our own testing", () => {
+  const baseline = makeBaseline(RELEASES, "2026-11-21");
+  const fresh = [...RELEASES, rel("v1.1.1", "2026-11-23", [asset("IDoc-1.1.1.dmg", 9), asset("IDoc-Setup-1.1.1.exe", 4)])];
+  const s = summarise(fresh, baseline);
+  assert.equal(s.latest.tag, "v1.1.1");
+  assert.equal(s.latest.mac + s.latest.win, 0);
+});
+
+test("a baseline never makes a count negative, and no baseline at all means raw counts", () => {
+  assert.equal(countedFor({ name: "IDoc-1.0.0.dmg", download_count: 2 }, { assets: { "IDoc-1.0.0.dmg": 5 } }), 0);
+  assert.equal(countedFor({ name: "IDoc-1.0.0.dmg", download_count: 2 }, undefined), 2);
+});
+
+test("the chart appears only once there is something to chart, and the note says when counting began", () => {
+  const baseline = makeBaseline(RELEASES, "2026-11-21");
+  const empty = renderBlock(summarise(RELEASES, baseline));
+  assert.doesNotMatch(empty, /releases\.svg/);
+  assert.match(empty, /counting began 2026-11-21/);
+  assert.match(renderBlock(summarise(RELEASES)), /releases\.svg/, "raw counts have something to chart");
 });

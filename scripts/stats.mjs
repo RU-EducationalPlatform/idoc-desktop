@@ -4,13 +4,18 @@
  *
  *   node scripts/stats.mjs              read the releases (GITHUB_TOKEN if set), rewrite stats/ and the README block (only if the README has the markers)
  *   node scripts/stats.mjs --check      the same, written nowhere: prints what it would write
+ *   node scripts/stats.mjs --baseline   snapshot every installer's count NOW (run after verifying a release, then commit it)
  *
  * Counted: the installers a person downloads (macOS .dmg, Windows Setup .exe, Linux .AppImage) on released versions (v1.2.3).
  * Not counted: add-on packs, the command-line archives, the update feed, editor-support and any pre-release.
- * A count is a download, not a person: it includes re-downloads and this project's own release checks.
+ * OUR OWN DOWNLOADING IS FILTERED OUT. GitHub's counter cannot tell a person from us checking a release, so every asset is measured
+ * from a BASELINE: stats/baseline.json holds each asset's count as it stood when we finished verifying that release, and only
+ * what comes after is shown. An asset not in the baseline yet (a release we have not finished checking) counts as zero, so a
+ * new release never shows our own testing. After verifying a release, run `node scripts/stats.mjs --baseline` and commit it.
+ * A count is a download, not a person: it still includes re-downloads by the same person.
  * Deterministic on purpose: no date is written anywhere, so the daily job commits only when a number changed.
  */
-import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
+import { readFileSync, writeFileSync, mkdirSync, rmSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 
 export const PLATFORMS = [["mac", "macOS"], ["win", "Windows"], ["linux", "Linux"]];
@@ -26,26 +31,44 @@ export function classify(name) {
 /** A released version: a v-tag that is neither a draft nor a pre-release. */
 export const isRelease = (r) => /^v\d+\.\d+\.\d+$/.test(r.tag_name ?? "") && !r.draft && !r.prerelease;
 
+/**
+ * What one installer asset counts for: its downloads minus what the baseline says were ours. No baseline at all means raw
+ * counts; a baseline that does not list the asset means "not checked yet", which counts as zero.
+ */
+export function countedFor(asset, baseline) {
+  const n = Number(asset.download_count) || 0;
+  if (!baseline) return n;
+  const ours = baseline.assets?.[asset.name];
+  return ours === undefined ? 0 : Math.max(0, n - ours);
+}
+
+/** The baseline file's content: every installer's count right now. Written by `--baseline` after a release is verified. */
+export function makeBaseline(releases, taken) {
+  const assets = {};
+  for (const r of releases.filter(isRelease)) for (const a of r.assets ?? []) if (classify(a.name)) assets[a.name] = Number(a.download_count) || 0;
+  return { taken, assets: Object.fromEntries(Object.entries(assets).sort(([x], [y]) => x.localeCompare(y))) };
+}
+
 /** Totals per platform for one release. */
-export function releaseCounts(release) {
+export function releaseCounts(release, baseline) {
   const c = { mac: 0, win: 0, linux: 0 };
-  for (const a of release.assets ?? []) { const p = classify(a.name); if (p) c[p] += Number(a.download_count) || 0; }
+  for (const a of release.assets ?? []) { const p = classify(a.name); if (p) c[p] += countedFor(a, baseline); }
   return c;
 }
 
 /** Everything the README, the badge and the chart show. `releases` is the API's list, any order. */
-export function summarise(releases) {
+export function summarise(releases, baseline) {
   const rel = releases.filter(isRelease).sort((a, b) => String(b.published_at).localeCompare(String(a.published_at)));
   const total = { mac: 0, win: 0, linux: 0 };
   const series = [];
   for (const r of rel) {
-    const c = releaseCounts(r);
+    const c = releaseCounts(r, baseline);
     for (const [p] of PLATFORMS) total[p] += c[p];
     series.push({ tag: r.tag_name, count: c.mac + c.win + c.linux });
   }
-  const latest = rel[0] ? { tag: rel[0].tag_name, ...releaseCounts(rel[0]) } : { tag: "", mac: 0, win: 0, linux: 0 };
+  const latest = rel[0] ? { tag: rel[0].tag_name, ...releaseCounts(rel[0], baseline) } : { tag: "", mac: 0, win: 0, linux: 0 };
   const all = total.mac + total.win + total.linux;
-  return { latest, total, all, series: series.slice(0, 12).reverse() };   // the chart reads oldest to newest
+  return { latest, total, all, since: baseline?.taken ?? null, series: series.slice(0, 12).reverse() };   // the chart reads oldest to newest
 }
 
 const sum = (c) => c.mac + c.win + c.linux;
@@ -66,9 +89,8 @@ export function renderBlock(s) {
     rows,
     `| **Total** | **${fmt(sum(s.latest))}** | **${fmt(s.all)}** |`,
     "",
-    '<img src="stats/releases.svg" alt="Installer downloads per release, last 12 releases" width="640">',
-    "",
-    "<sub>Counted from GitHub's own release counters: the installers only, not add-on packs or tools. A count is a download, not a person.</sub>",
+    ...(s.series.some((p) => p.count > 0) ? ['<img src="stats/releases.svg" alt="Installer downloads per release, last 12 releases" width="640">', ""] : []),
+    `<sub>Counted from GitHub's own release counters: the installers only, not add-on packs or tools. Our own downloading and testing is left out: each release is counted from the moment we finished checking it${s.since ? ` (counting began ${s.since})` : ""}. A count is a download, not a person.</sub>`,
   ].join("\n");
 }
 
@@ -114,9 +136,20 @@ async function fetchReleases(token) {
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
   const releases = await fetchReleases(process.env.GITHUB_TOKEN);
-  const s = summarise(releases);
+  if (process.argv.includes("--baseline")) {
+    const b = makeBaseline(releases, new Date().toISOString().slice(0, 10));
+    mkdirSync("stats", { recursive: true });
+    writeFileSync("stats/baseline.json", JSON.stringify(b, null, 2) + "\n");
+    console.log(`baseline written: ${Object.keys(b.assets).length} installers as of ${b.taken}`);
+    process.exit(0);
+  }
+  let baseline;
+  try { baseline = JSON.parse(readFileSync("stats/baseline.json", "utf8")); } catch { baseline = undefined; }   // quality-ok: no baseline file means raw counts, as documented
+  const s = summarise(releases, baseline);
   if (!releases.length || !s.series.length) throw new Error("no released versions found: refusing to overwrite the README with zeros");
-  const files = { "stats/summary.json": JSON.stringify(s, null, 2) + "\n", "stats/downloads.json": JSON.stringify(shieldsEndpoint(s)) + "\n", "stats/releases.svg": chartSvg(s.series) };
+  const files = { "stats/summary.json": JSON.stringify(s, null, 2) + "\n", "stats/downloads.json": JSON.stringify(shieldsEndpoint(s)) + "\n" };
+  // the chart exists only once there is something to chart; an old one with older numbers must not linger
+  if (s.series.some((p) => p.count > 0)) files["stats/releases.svg"] = chartSvg(s.series); else rmSync("stats/releases.svg", { force: true });
   const current = readFileSync("README.md", "utf8");
   if (process.argv.includes("--check")) { console.log(renderBlock(s)); console.log(shieldsEndpoint(s)); process.exit(0); }
   mkdirSync("stats", { recursive: true });

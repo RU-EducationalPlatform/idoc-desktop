@@ -1,11 +1,11 @@
 name: stats
 
 # Rewrites the download table, the chart and the badge file from GitHub's own release counters (scripts/stats.mjs).
-# Manual for now (see below). It commits only when a number changed, and uses nothing but the
+# Runs once a week. It commits only when a number changed, and uses nothing but the
 # repository's own token: no secrets, no third-party actions.
 on:
-  # Manual only, for now: the count is mostly this project's own testing, so nothing is published or updated by itself.
-  # To publish it again: put the two markers back in the README (scripts/stats.mjs) and restore the schedule and release triggers.
+  schedule:
+    - cron: "17 5 * * 1"      # once a week, Monday
   workflow_dispatch:
 
 permissions:

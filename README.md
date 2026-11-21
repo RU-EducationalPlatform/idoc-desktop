@@ -13,6 +13,7 @@ questions, written in plain text and rendered live as you type.
 [![macOS](https://img.shields.io/badge/macOS-Apple%20silicon-1f1d2e?style=for-the-badge)](../../releases/latest)
 [![Windows](https://img.shields.io/badge/Windows-10%20%2F%2011-1f1d2e?style=for-the-badge)](../../releases/latest)
 [![Linux](https://img.shields.io/badge/Linux-x86__64-1f1d2e?style=for-the-badge)](../../releases/latest)
+[![Downloads](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2FRU-EducationalPlatform%2Fidoc-desktop%2Fmain%2Fstats%2Fdownloads.json&style=for-the-badge)](#downloads)
 
 [Download](#download) · [What it does offline](#what-the-app-does-that-a-browser-cannot) · [First run](#first-run) · [Add-ons](#add-ons) · [Updates](#updates) · [Write IDoc anywhere](#write-idoc-anywhere)
 
@@ -46,6 +47,19 @@ Take the newest build from **[Releases](../../releases/latest)**.
 > unidentified developer — open it once with right-click → **Open**. Windows
 > SmartScreen will warn — **More info** → **Run anyway**. Signing identities are
 > being arranged; until they exist, this notice is the honest state of it.
+
+<!-- stats:start -->
+### Downloads
+
+| Platform | v1.1.0 | All releases |
+|---|---:|---:|
+| macOS | 0 | 0 |
+| Windows | 0 | 0 |
+| Linux | 0 | 0 |
+| **Total** | **0** | **0** |
+
+<sub>Counted from GitHub's own release counters: the installers only, not add-on packs or tools. Our own downloading and testing is left out: each release is counted from the moment we finished checking it (counting began 2026-11-21). A count is a download, not a person.</sub>
+<!-- stats:end -->
 
 ### Opening it on Linux
 
