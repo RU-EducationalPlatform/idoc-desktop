@@ -51,13 +51,15 @@ Take the newest build from **[Releases](../../releases/latest)**.
 <!-- stats:start -->
 ### Downloads
 
-| Platform | v1.1.0 | All releases |
+| Platform | v1.1.2 | All releases |
 |---|---:|---:|
-| macOS | 0 | 0 |
-| Windows | 0 | 0 |
-| Linux | 0 | 0 |
+| macOS | 0 | 5 |
+| Windows | 0 | 2 |
+| Linux | 0 | 2 |
 | Early testers | | 10 |
-| **Total** | **0** | **10** |
+| **Total** | **0** | **19** |
+
+<img src="stats/releases.svg" alt="Installer downloads per release, last 12 releases" width="640">
 
 <sub>Counted from GitHub's own release counters: the installers only, not add-on packs or tools. The early testers are counted once, as a group; after that only real downloads count, each release from the moment we finished checking it (counting began 2026-11-21). A count is a download, not a person.</sub>
 <!-- stats:end -->

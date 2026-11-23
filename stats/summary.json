@@ -1,27 +1,19 @@
 {
   "latest": {
-    "tag": "v1.1.0",
+    "tag": "v1.1.2",
     "mac": 0,
     "win": 0,
     "linux": 0
   },
   "total": {
-    "mac": 0,
-    "win": 0,
-    "linux": 0
+    "mac": 5,
+    "win": 2,
+    "linux": 2
   },
   "testers": 10,
-  "all": 10,
+  "all": 19,
   "since": "2026-11-21",
   "series": [
-    {
-      "tag": "v0.1.29",
-      "count": 0
-    },
-    {
-      "tag": "v0.1.30",
-      "count": 0
-    },
     {
       "tag": "v0.1.31",
       "count": 0
@@ -60,6 +52,14 @@
     },
     {
       "tag": "v1.1.0",
+      "count": 0
+    },
+    {
+      "tag": "v1.1.1",
+      "count": 9
+    },
+    {
+      "tag": "v1.1.2",
       "count": 0
     }
   ]
